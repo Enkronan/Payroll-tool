@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Apology
+{% endblock %}
+
+{% block main %}
+
+
+    <div>
+        <h1> Select an employee for {{ session['current_company'] }} </h1>
+            <form action="/employee" method="post">
+                <div class="form-group">
+                    <select class= "form-group" name="employee">
+                        <option disabled selected value>Employee</option>
+                        {% for item in rows%}
+                        <option value= "{{ item.first_name }}">{{ item.first_name + ' ' + item.last_name }}</option>
+                        {%endfor%}
+                    </select>
+                </div>
+                <button class="btn btn-primary" type="submit">Pick Employee</button>
+            </form>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Want to add an employee? <a class="ml-2" href="{{ url_for('add_employee') }}">Add Employee</a>
+        </small>
+    </div
+{% endblock %}

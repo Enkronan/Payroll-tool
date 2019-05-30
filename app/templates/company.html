@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Apology
+{% endblock %}
+
+{% block main %}
+
+
+    <div>
+        <h1> Select a company </h1>
+            <form action="/company" method="post">
+                <div class="form-group">
+                    <select class= "form-group" name="company">
+                        <option disabled selected value>Company</option>
+                        {% for item in rows%}
+                        <option value= "{{ item.company_name }}">{{ item.company_name }}</option>
+                        {%endfor%}
+                    </select>
+                </div>
+                <button class="btn btn-primary" type="submit">Pick Company</button>
+            </form>
+    </div>
+    <div>
+        <h1>Add a company</h1>
+        <div class='form-group'>
+        <form action="/add_company" method="post">
+            <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="company_name" placeholder="Name" type="text">
+            <input autocomplete="off" autofocus class="form-control" name="org_number" placeholder="Organization number" type="number">
+            </div>    
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+        </div>
+    </div>
+
+{% endblock %}

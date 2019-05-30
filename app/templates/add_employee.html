@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Apology
+{% endblock %}
+
+{% block main %}
+<h1> You are currently adding an employee to {{ current_company }}</h1>
+
+<div class="form-group">
+    <form action="/add_employee" method="post">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4"> Add Employee! </legend>
+            <div class="form-group">
+                {{ form.first_name.label(class="form-control-label") }}
+                {% if form.first_name.errors %}
+                    {{ form.first_name(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.first_name.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.first_name(class="form-control form-control-lg") }}
+                {% endif %}                      
+            </div>
+            <div class="form-group">
+                {{ form.last_name.label(class="form-control-label") }}
+                {% if form.last_name.errors %}
+                    {{ form.last_name(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.last_name.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.last_name(class="form-control form-control-lg") }}
+                {% endif %}  
+            </div>
+            <div class="form-group">
+                {{ form.person_nummer.label(class="form-control-label") }}
+                {% if form.person_nummer.errors %}
+                    {{ form.person_nummer(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.person_nummer.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.person_nummer(class="form-control form-control-lg") }}
+                {% endif %}  
+            </div>
+            <div class="form-group">
+                {{ form.expat_type.label(class="form-control-label") }}
+                {% if form.expat_type.errors %}
+                    {{ form.expat_type(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.expat_type.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.expat_type(class="form-control form-control-lg") }}
+                {% endif %}  
+            </div>
+            <div class="form-group">
+                {{ form.assign_start.label(class="form-control-label") }}
+                {% if form.assign_start.errors %}
+                    {{ form.assign_start(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.assign_start.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.assign_start(class="form-control form-control-lg") }}
+                {% endif %}  
+            </div>
+            <div class="form-group">
+                {{ form.assign_end.label(class="form-control-label") }}
+                {% if form.assign_end.errors %}
+                    {{ form.assign_end(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.assign_end.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.assign_end(class="form-control form-control-lg") }}
+                {% endif %}  
+            </div>
+            <div class="form-check">
+                {{ form.expert(class="form-check-input") }}
+                {{ form.expert.label(class="form-check-label") }}
+            </div>
+            <div class="form-check">
+                {{ form.sink(class="form-check-input") }}
+                {{ form.sink.label(class="form-check-label") }}
+            </div>
+            <div class="form-check">
+                {{ form.six_month_rule(class="form-check-input") }}
+                {{ form.six_month_rule.label(class="form-check-label") }}
+            </div>
+            <div class="form-group">
+                {{ form.social_security.label(class="form-control-label") }}
+                {% if form.social_security.errors %}
+                    {{ form.social_security(class="form-control form-control-lg is-invalid") }}    
+                    <div class="invalid-feedback">
+                        {% for error in form.social_security.errors %}
+                            <span>{{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.social_security(class="form-control form-control-lg") }}
+                {% endif %}  
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info")}}
+        </div>
+    </form>
+</div>
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Want to choose a company? <a class="ml-2" href="{{ url_for('company') }}">Pick now</a>
+    </small>
+</div>
+
+{% endblock %}

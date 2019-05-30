@@ -1,0 +1,107 @@
+<IU> - Individuppgift (information på individnivå);;;;
+Term/Fält;;;;
+Beskrivning;Elementnamn i XML;Ant;Typ;Fältkod
+Gruppering av uppgifter gällande den arbetsgivarregisterade;ArbetsgivareHUGROUP;1;Grp;
+Gruppering av uppgifter gällande betalningsmottagaren;BetalningsmottagareIUGROUP;1;Grp;
+Den redovisningsperiod som arbetsgivardeklarationen avser;RedovisningsPeriod;1;REDOVISNINGSPERIOD;006
+Specifikationsnummer måste alltid anges och ska vara unikt för betalningsmottagaren, arbetsgivaren/utbetalaren och redovisningsperioden. Vid rättelse eller borttag måste samma specifikationsnummer som angetts på den ursprungliga individuppgiften användas för att kunna härleda vilken individuppgift som ska rättas/tas bort.;Specifikationsnummer;1;SPECIFIKATIONSNUMMER;570
+Anges då borttag av tidigare inskickad individuppgift ska göras;Borttag;0-1;KRYSS;205
+Arbetsställenummer som tilldelats av Statistiska centralbyrån (SCB);Arbetsstallenummer;0-1;ARBETSSTALLENUMMER;060
+Reglerna om särskild beräkning av vissa avgifter för först anställda (växa-stöd) är tillämpliga;ForstaAnstalld;0-1;KRYSS;062
+Belopp som tidigare redovisats som inte skattepliktigt ersättning ska redovisas i fältet Avräkning från avgiftsfri ersättning;AvraknadAvgiftsfriErs;0-1;BELOPP6;010
+Kontant ersättning för arbete, exempelvis bruttolön, som är underlag för arbetsgivaravgifter;KontantErsattningUlagAG;0-1;BELOPP8;011
+Det sammanlagda värdet av andra förmåner än bilförmån och förmån av fritt drivmedel vid bilförmån som är underlag för arbetsgivaravgifter. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning;SkatteplOvrigaFormanerUlagAG;0-1;BELOPP7;012
+Värdet av bilförmån (utom drivmedel) som är underlag för arbetsgivaravgifter. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning;SkatteplBilformanUlagAG;0-1;BELOPP6;013
+Förmån av fritt drivmedel vid bilförmån som är underlag för arbetsgivaravgifter. Förmånen ska värderas till marknadsvärdet multiplicerat med 1,2. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning. Vid beräkning av arbetsgivaravgifterna värderas förmånen till marknadsvärdet, utan uppräkning;DrivmVidBilformanUlagAG;0-1;BELOPP6;018
+Bostadsförmån som är underlag för arbetsgivaravgifter där bostaden finns i en småhusfastighet (ej semesterbostad). Förmånsvärdet ska anges i fältet Övriga skattepliktiga förmåner som är underlag för arbetsgivaravgifter (FK012);BostadsformanSmahusUlagAG;0-1;KRYSS;041
+Bostadsförmån som är underlag för arbetsgivaravgifter där bostaden inte finns i en småhusfastighet (ej semesterbostad). Förmånsvärdet ska anges i fältet Övriga skattepliktiga förmåner som är underlag för arbetsgivaravgifter (FK012);BostadsformanEjSmahusUlagAG;0-1;KRYSS;043
+Skattepliktig bilförmån (utom drivmedel), bostadsförmån eller kostförmån som är underlag för arbetsgivaravgifter/underlag för egenavgifter/ej underlag för arbetsgivaravgifter har justerats. Ska kombineras med belopp i fältet Övriga skattepliktiga förmåner (FK012/FK126/FK132) eller skattepliktig bilförmån (FK013/FK127/FK133) där det justerade beloppet anges;FormanHarJusterats;0-1;KRYSS;048
+Personaloption som inte ska förmånsbeskattas och som har utnyttjats för förvärv av andel;Personaloption;0-1;KRYSS;059
+Den del av bruttolönen som motsvarar ersättning för utgifter i arbetet enligt Skatteverkets beslut eller fastställd schablon. Beloppet ska ingå i den redovisade bruttolönen (FK011);AvdragUtgiftArbetet;0-1;BELOPP7;019
+Avdragen preliminär skatt;AvdrPrelSkatt;0-1;BELOPP8;001
+Avdragen särskild inkomstskatt för utomlands bosatta (SINK);AvdrSkattSINK;0-1;BELOPP8;274
+Avdragen särskild inkomstskatt för utomlands bosatta artister m.fl. (A-SINK);AvdrSkattASINK;0-1;BELOPP8;275
+När skatteavdrag inte gjorts från inkomst av arbete som utförts i annat nordiskt land än Sverige och utbetalats av utländska arbetsgivare. När inkomsten inte ska beskattas i Sverige enligt det nordiska skatteavtalet. Även vid inkomst av arbete som utförts i Sverige men som inte ska beskattas i Sverige enligt ett skatteavtal, särskild inkomstskatt för utomlands bosatta artister m.fl. (A-SINK);SkattebefrEnlAvtal;0-1;KRYSS;114
+Beslut finns om att skatteavdrag inte ska göras på grund av utlandsarbete, exempelvis då sexmånadsregeln är tillämplig eller vid arbete som utförs för svensk arbetsgivare i annat nordiskt land;EjskatteavdragEjbeskattningSv;0-1;KRYSS;276
+Betalningsmottagare är anlitad i ett annat land, av en svensk arbetsgivare, för att utföra arbete utomlands i det landet (s.k. lokalanställd);Lokalanstalld;0-1;KRYSS;253
+Anställd på utländsk beskickning i Sverige och som enligt skatteavtal ska betala skatt i beskickningslandet;AmbassadanstISvMAvtal;0-1;KRYSS;094
+Kod för ersättning från försäkringsutbetalare m.fl. I bilaga Lands-och ersättningskoder finns en beskrivning av kodernas betydelse. Endast giltiga koder får användas. Ersättningsbelopp anges i Ersättningsbelopp 1 (FK005). Om betalningsmottagaren erhållit flera ersättningstyper ska respektive typ specificeras. Upp till fyra ersättningstyper kan redovisas per individuppgift. Dessa redovisas i fälten Ersättningskod 2 - 4 (FK084, FK086, FK088) och Ersättningsbelopp 2 - 4 (FK085, FK087, FK089);ErsattningsKod1;0-1;ERSATTNINGSKOD;004
+Ersättningsbelopp för Ersättningskod 1 (FK005);ErsattningsBelopp1;0-1;BELOPP8;005
+Kod för ersättning från försäkringsutbetalare m.fl. I bilaga Lands-och ersättningskoder finns en beskrivning av kodernas betydelse. Endast giltiga koder får användas. Ersättningsbelopp anges i Ersättningsbelopp 2 (FK085);ErsattningsKod2;0-1;ERSATTNINGSKOD;084
+Ersättningsbelopp för Ersättningskod 2 (FK084);ErsattningsBelopp2;0-1;BELOPP8;085
+Kod för ersättning från försäkringsutbetalare m.fl. I bilaga Lands-och ersättningskoder finns en beskrivning av kodernas betydelse. Endast giltiga koder får användas. Ersättningsbelopp anges i Ersättningsbelopp 3 (FK087);ErsattningsKod3;0-1;ERSATTNINGSKOD;086
+Ersättningsbelopp för Ersättningskod 3 (FK086);ErsattningsBelopp3;0-1;BELOPP8;087
+Kod för ersättning från försäkringsutbetalare m.fl. I bilaga Lands-och ersättningskoder finns en beskrivning av kodernas betydelse. Endast giltiga koder får användas. Ersättningsbelopp anges i Ersättningsbelopp 4 (FK089);ErsattningsKod4;0-1;ERSATTNINGSKOD;088
+Ersättningsbelopp för Ersättningskod 4 (FK088);ErsattningsBelopp4;0-1;BELOPP8;089
+Ersättning upp till avdragsgillt schablonbelopp för resor med privat bil i tjänsten har betalats ut. Om ersättningen som betalats ut överstiger schablonbelopp ska den överstigande delen redovisas som kontant ersättning för arbete (FK011/FK125/FK131);Bilersattning;0-1;KRYSS;050
+Traktamentsersättning upp till avdragsgillt schablonbelopp har betalats ut. Om ersättningen som betalats ut överstiger schablonbelopp ska den överstigande delen redovisas som kontant ersättning för arbete (FK011/FK125/FK131);Traktamente;0-1;KRYSS;051
+Här redovisas andra kostnadsersättningar än bilersättning (FK050) och traktamente (FK051) med utbetalat belopp;AndraKostnadsers;0-1;BELOPP7;020
+Kontant ersättning som inte är underlag för arbetsgivaravgifter, exempelvis lön till anställd som tillhör ett annat lands socialförsäkring, ersättning till en juridisk person som har A-skatt, vissa ersättningar till idrottsutövare m.m.;KontantErsattningEjUlagSA;0-1;BELOPP8;131
+Ersättning till uppenbart anställd som är godkänd för F-skatt eller annan betalningsmottagare, som utan att vara näringsidkare, som själv ska betala egenavgifter eller särskild löneskatt. Beloppet ska inte ingå i något annat fält;KontantErsattningUlagEA;0-1;BELOPP8;125
+Det sammanlagda värdet av andra skattepliktiga förmåner än bilförmån och drivmedelsförmån vid bilförmån som inte är underlag för arbetsgivaravgifter;SkatteplOvrigaFormanerEjUlagSA;0-1;BELOPP7;132
+Skattepliktiga förmåner utom bilförmån och förmån av fritt drivmedel vid bilförmån som är underlag för egenavgifter;SkatteplOvrigaFormanerUlagEA;0-1;BELOPP7;126
+Värdet av skattepliktig bilförmån (utom drivmedel) som inte är underlag för arbetsgivaravgifter. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning;SkatteplBilformanEjUlagSA;0-1;BELOPP6;133
+Värdet av skattepliktig bilförmån (utom drivmedel) som är underlag för egenavgifter. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning;SkatteplBilformanUlagEA;0-1;BELOPP6;127
+Förmån av fritt drivmedel vid bilförmån som inte är underlag för arbetsgivaravgifter. Förmånen ska värderas till marknadsvärde multiplicerat med 1,2. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning;DrivmVidBilformanEjUlagSA;0-1;BELOPP6;134
+Förmån av fritt drivmedel vid bilförmån som är underlag för egenavgifter. Förmånen ska värderas till marknadsvärde multiplicerat med 1,2. Om den anställde har betalat för förmånen genom nettolöneavdrag ska förmånens värde minskas med den anställdes betalning;DrivmVidBilformanUlagEA;0-1;BELOPP6;128
+Bostadsförmån som är underlag för egenavgifter där bostaden finns i en småhusfastighet (ej semesterbostad). Förmånsvärdet ska anges i fältet Övriga skattepliktiga förmåner som är underlag för egenavgifter (FK126);BostadsformanSmahusUlagEA;0-1;KRYSS;123
+Pension i form av förmån för anställd som gått i pension (ej underlag för arbetsgivaravgifter). Kombineras med belopp i Övriga skattepliktiga förmåner (FK132), Skattepliktig bilförmån (FK133) eller Drivmedel vid bilförmån (FK134) där förmånsbeloppet anges;FormanSomPensionEjUlagSA;0-1;KRYSS;136
+Bostadsförmån som är underlag för egenavgifter där bostaden inte finns i en småhusfastighet (ej semesterbostad). Förmånsvärdet ska anges i fältet Övriga skattepliktiga förmåner som är underlag för egenavgifter (FK126);BostadsformanEjSmahusUlagEA;0-1;KRYSS;124
+Bostadsförmån (som är inte är underlag för socialavgifter) där bostaden finns i en småhusfastighet (ej semesterbostad). Förmånsvärdet ska anges i fältet Övriga skattepliktiga förmåner;BostadsformanSmahusEjUlagSA;0-1;KRYSS;137
+Bostadsförmån som inte är underlag för arbetsgivaravgifter där bostaden inte finns i en småhusfastighet (ej semesterbostad). Förmånsvärdet ska anges i fältet Övriga skattepliktiga förmåner som inte är underlag för arbetsgivaravgifter(FK132);BostadsformanEjSmahusEjUlagSA;0-1;KRYSS;138
+Här redovisas ersättning som inte är underlag för sociala avgifter och som inte ger rätt till skattereduktion för arbetsinkomst (jobbskatteavdrag). Ersättningar som avses är vissa livräntor, ärvd royalty, utbetalningar från vinstandelsstiftelse och periodiskt understöd;ErsEjSocAvgEjJobbavd;0-1;BELOPP8;032
+Tjänstepension som arbetsgivaren betalat ut till före detta anställda eller till deras efterlevande;Tjanstepension;0-1;BELOPP8;030
+Ersättning/förmån avseende bostad samt resa till och från anställning/förrättning när den anställde/betalningsmottagaren beskattas enligt lagen om särskild inkomstskatt för utomlands bosatta (SINK-lagen);ErsFormanBostadMmSINK;0-1;BELOPP8;036
+Vissa inte skattepliktiga ersättningar till utländska experter m.fl. enligt beslut från Forskarskattenämnden;Forskarskattenamnden;0-1;BELOPP8;035
+Vissa avdrag från lönen avseende avgifter som den anställde får dra av (t.ex. mätningsavgifter som den anställde betalat i tjänsten eller avgifter för egen eller efterlevandes pension). Beloppet ska ingå i den redovisade bruttolönen (FK011);VissaAvdrag;0-1;BELOPP6;037
+Underlag för skattereduktion för rutarbete (t.ex. arbetskostnad för städning, trädgårdsarbete, flytt etc.);UnderlagRutarbete;0-1;BELOPP6;021
+Underlag för skattereduktion för rotarbete (t.ex. arbetskostnad för reparation, underhåll, om- och tillbyggnad);UnderlagRotarbete;0-1;BELOPP6;022
+Marknadsmässig ersättning som arbetsgivaren betalat till den anställde och som räknas till inkomstslaget kapital. Exempelvis ersättning för hyra av garage eller lagerlokal i bostaden;Hyresersattning;0-1;BELOPP7;039
+Internationell identitet på fartyget. Framgår av meddelande om fartygsklassificering som utfärdats av Skatteverket i början av varje år. Uppgiften är nödvändig för beräkning av bl.a. sjöinkomstavdrag och ska därför alltid anges. Anges även för arbete ombord på utländska fartyg;Fartygssignal;0-1;FARTYGSSIGNAL;026
+Antal dagar med sjöinkomst i närfart eller fjärrfart. Uppgiften är nödvändig för beräkning av bl.a. sjöinkomstavdrag och ska därför alltid anges;AntalDagarSjoinkomst;0-1;DAGAR;027
+Uppgift om fartyget går i närfart eller fjärrfart. N = Närfart, F = Fjärrfart. Framgår av meddelande om fartygsklassificering som utfärdats av Skatteverket i början av varje år. Uppgiften är nödvändig för beräkning av bl.a. sjöinkomstavdrag och ska därför alltid anges;NarfartFjarrfart;0-1;NARFARTFJARRFART;028
+Namn på fartyget ska alltid anges för att säkerställa rätt sjöinkomstavdrag m.m.;FartygetsNamn;0-1;TEXT50;223
+Här anges vilken typ av verksamhet ersättningen avser, t.ex. konsert, cirkus eller liknande för anställd/betalningsmottagare som är begränsat skattskyldig och beskattas enligt lag om särskild inkomstskatt för utomlands bosatta artister m.fl. (A-SINK);VerksamhetensArt;0-1;TEXT50;112
+Om en anställd sänds ut för arbete i annat land, alternativt om en anställd sänds till Sverige från annat land för arbete, ska utsändningstiden enligt utsändningsavtal fyllas i. Aktuellt alternativ anges med bokstav A, B eller C (A: mindre än 6 månader, B: 6-12 månader, C: mer än 1 år);UtsandUnderTid;0-1;SANDUNDERTID;091
+Här anges om konvention om social trygghet med Indien, USA, Kanada, Québec eller Sydkorea är tillämplig för betalningsmottagaren. Fältet ska bara användas då delar av arbetsgivaravgifterna ska betalas i Sverige. Om fulla, alternativt inga arbetsgivaravgifter ska betalas ska fältet lämnas tomt. Anges med två tecken. I första positionen anges siffra 1-4, i andra positionen anges bokstav A - D. Se separat tabell i bilaga Interna koder, flik Konventioner för beskrivning av första och andra positionen;KonventionMed;0-1;KONVENTION;305
+Landskod arbetsland ska anges om arbetet utförts i annat land än Sverige. Landskod anges med två bokstäver enligt bilaga Land- och ersättningskoder (ISO 3166-1 alpha 2);LandskodArbetsland;0-1;LANDSKOD;090
+;;;;
+;;;;
+<ArbetsgivareIUGROUP> - Uppgifter kopplad till den arbetsgivarregisterade;;;;
+Term/Fält;;;;
+Beskrivning;Elementnamn i XML;Ant;Typ;Fältkod
+Arbetsgivare och andra utbetalare. Obligatoriskt fält. Person-/samordnings-/organisationsnummer ska ha sekelsiffrorna 19-20 för fysiska personer och 16 för juridiska personer;AgRegistreradId;1;IDENTITET;201
+;;;;
+;;;;
+<BetalningsmottagareIUGROUP> - Uppgifter kopplad till betalningsmottagaren;;;;
+Term/Fält;;;;
+Beskrivning;Elementnamn i XML;Ant;Typ;Fältkod
+Schemateknisk struktur för att säkerställa att minst ett sätt att identifiera en betalningsmottagare per IU har valts i XML-dokumentet;BetalningsmottagareIDChoice;1;Grp;
+Förnamn för betalningsmottagaren ska lämnas för fysisk person om person-/samordningsnummer (FK215) saknas;Fornamn;0-1;TEXT50;216
+Efternamn för betalningsmottagaren ska lämnas för fysisk person om person-/samordningsnummer (FK215) saknas;Efternamn;0-1;TEXT50;217
+Namn på betalningsmottagare som är utländsk juridisk person och saknar svenskt organisationsnummer;OrgNamn;0-1;TEXT50;226
+Gatuadress för betalningsmottagaren ska lämnas om person-/samordnings-/organisationsnummer (FK215) saknas;Gatuadress;0-1;TEXT50;218
+Vid behov av mer utrymme, t.ex. för en c/o-adress kan Gatuadress 2 användas;Gatuadress2;0-1;TEXT50;228
+Landskod Postort lämnas om person-/samordnings-/organisationsnummer (FK215) saknas och utländsk adress angetts. Landskod Postort ska även anges om fältet Fri Adress (FK230) använts. Landskod Postort för adress anges med två bokstäver, enligt bilaga Land- och ersättningskoder (ISO 3166-1 alpha 2);LandskodPostort;0-1;LANDSKOD;221
+Postort ska lämnas om person-/samordnings-/organisationsnummer (FK215) saknas;Postort;0-1;TEXT50;220
+Postnummer ska lämnas om person-/samordnings-/organisationsnummer (FK215) saknas;Postnummer;0-1;POSTNUMMER;219
+Fält som kan användas för utländska adresser som inte kan indelas i gatuadress, postnummer och postort. Fri adress måste alltid kombineras med Landskod postort (FK221) och kan kombineras med andra fasta adressfält;FriAdress;0-1;TEXT200;230
+Anges för begränsat skattskyldiga i Sverige. Landskod anges med två bokstäver enligt bilaga Land- och ersättningskoder (ISO 3166-1 alpha 2);LandskodMedborgare;0-1;LANDSKOD;81
+Utländskt skatteregistreringsnummer, TIN (Tax Identification Number), ska alltid lämnas för person som är obegränsat skattskyldig i Sverige och som har sin hemvist i annan stat samt för personer som är begränsat skattskyldiga. Den som uppgiften avser får skatteregistreringsnumret i det land där han eller hon har sin skatterättsliga hemvist;TIN;0-1;TEXT20;252
+Landskod anges för det land som utfärdat angivet TIN-nummer (FK252). Anges med två bokstäver enligt bilaga Land- och ersättningskoder (ISO 3166-1 alpha 2). Krävs för att ett TIN-nummer ska vara komplett;LandskodTIN;0-1;LANDSKOD;076
+;;;;
+;;;;
+<BetalningsmottagareIDChoice> - Identiferingsstruktur kopplat till betalningsmottagaren;;;;
+Schemateknisk struktur för att säkerställa att minst ett sätt att identifiera en betalningsmottagare per IU har valts i XML-dokumentet. En av tre olika kombinationer av identifiering väljs i XML-dokumentet där termerna BetalningsmottagareId, Fodelsetid och AnnatId ingår enligt exempel nedan.;;;;
+Term/Fält;;;;
+Beskrivning;Elementnamn i XML;Ant;Typ;Fältkod
+Personnummer/samordningsnummer/organisationsnummer inkl. sekelsiffrorna 19-20 för fysiska personer och 16 för juridiska personer inkl. dödsbo och s.k. GD-nummer (ett speciellt registreringsnummer för personer bosatta utomlands men som är skattskyldiga i Sverige);BetalningsmottagarId;;IDENTITET;215
+Om betalningsmottagaren saknar personnummer/samordningsnummer ska födelsetid (för fysisk person) istället anges;Fodelsetid;;FODELSETID;222
+Används för juridisk person som saknar svenskt organisationsnummer. Kan även användas för fysisk person där personnummer/samordningsnummer samt uppgift om födelsetid saknas. Om AnnatId används kommer alltid fulla arbetgivaravgifter att tas ut;AnnatId;;TEXT50;224
+Exempel på hur ovanstående fält kan grupperas i XML-dokumentet i <BetalningsmottagareIDChoice>;;;;
+Gruppering, typ 1;BetalningsmottagarId;1;IDENTITET;215
+;Fodelsetid;0-1;FODELSETID;222
+;AnnatId;0-1;TEXT50;224
+Gruppering, typ 2;Fodelsetid;1;FODELSETID;222
+;AnnatId;0-1;TEXT50;224
+Gruppering, typ 3;AnnatId;1;TEXT50;224
