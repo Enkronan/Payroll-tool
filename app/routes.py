@@ -3,7 +3,7 @@ from flask import flash, jsonify, redirect, render_template, request, session, u
 from app.helpers import apology, login_required, lookup
 from app.models import User, Company, Employee
 from app.forms import RegistrationForm, LoginForm, AddCompany, AddEmployee, CalculateInitial
-from app.funktioner import apportion_expert, apportion_standard, calculate_SINK, calculate_tax, socialavgifter, onetimetax, social_security_type, previous_period, current_period
+from app.funktioner import apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter, onetimetax, social_security_type, previous_period, current_period, start_calculation_logic
 from flask_login import login_user, current_user, logout_user
 
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -69,7 +69,7 @@ def login():
             login_user(user,remember=form.remember.data)
             return redirect(url_for('home'))
         else:
-            flash('Loggin Unsuccesfull. Please check username and password', 'danger')
+            flash('Login Unsuccesfull. Please check username and password', 'danger')
 
     return render_template("login1.html", title='Login', form=form)
 
@@ -83,10 +83,9 @@ def register():
     
     form = RegistrationForm()
     if form.validate_on_submit():
-        #hash password
+
         hash_1 = generate_password_hash(form.password.data, method='pbkdf2:sha256')
 
-        #add new user
         user = User(username = form.username.data, password = hash_1) 
         db.session.add(user)
         db.session.commit()
@@ -137,7 +136,8 @@ def add_employee():
     try:
         current_company = Company.query.filter_by(company_name = session['current_company']).first().company_name
     except:
-        current_company = 'NONE'
+        flash('You need to pick a company first!', 'danger')
+        return redirect(url_for('company'))
 
     return render_template("add_employee.html", form=form, title='Employee', current_company = current_company)
 
@@ -147,6 +147,17 @@ def calculate():
 
     form = CalculateInitial()
 
+    if form.validate_on_submit():
+        cash_amount = int(form.cash_amount.data)
+        cash_type = form.cash_type.data
+
+        if cash_type == 'Net':
+            result = start_calculation_logic(cash_amount,0)
+            return render_template("result.html", result = result)
+        else:
+            result = start_calculation_logic(0,cash_amount)
+            return render_template("result.html", result = result)
+
     try:
         current_employee = Employee.query.get(session['employee'])
         current_company = Company.query.filter_by(company_name = session['current_company']).first()
@@ -154,6 +165,7 @@ def calculate():
     except:
         flash('You need to pick an employee first!', 'danger')
         return redirect(url_for('employee'))
+
 
     return render_template("calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
 

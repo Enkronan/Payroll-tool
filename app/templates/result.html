@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Result
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="content-section">
+        <h3>Information</h3>
+        <p class='text-muted'><b>Result of calculation</b>
+            <ul class="list-group">
+            <li class="list-group-item list-group-item-light">Gross Amount: {{ result.brutto }}</li>
+            <li class="list-group-item list-group-item-light">Taxes: {{ result.skatt }}</li>
+            </ul>
+        </p>
+        </div>
+    </div>
+</div>
+
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Want to choose a company? <a class="ml-2" href="{{ url_for('company') }}">Pick now</a>
+    </small>
+</div>
+
+{% endblock %}

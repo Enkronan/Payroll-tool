@@ -4,6 +4,11 @@ import datetime
 import time
 import random
 
+from app import app, db
+from flask import flash, jsonify, redirect, render_template, request, session, url_for
+from app.models import User, Company, Employee
+from flask_login import login_user, current_user, logout_user
+
 def previous_period():
     today = datetime.date.today()
     first = today.replace(day=1)
@@ -124,13 +129,13 @@ def calculate_SINK(expert, netto = 0, brutto = 0):
 
 #print(calculate_SINK(0.75,77286,0))
 
-def calculate_tax(år, tabell, expert, netto = 0, brutto = 0):
+def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     
     if not 1.00 >= expert >= 0.75:
         return "expert needs to be a value between 0.75 and 1.00"
 
     try:     
-        if int(år) and int(tabell) and int(netto) and int(brutto):
+        if int(tabell) and int(netto) and int(brutto):
             pass
     except:
         return "everything needs to be numbers"
@@ -139,7 +144,7 @@ def calculate_tax(år, tabell, expert, netto = 0, brutto = 0):
         tabeller = csv.reader(csvfile, delimiter=";")
 
         for row in tabeller:
-            if row[0] == år and row[2] == tabell:
+            if row[2] == tabell:
                 if netto > 0: 
                     if row[4] == '':
                         procent = int(row[5])/100
@@ -170,7 +175,7 @@ def calculate_tax(år, tabell, expert, netto = 0, brutto = 0):
                             skatt = int(brutto*expert) * (skatt/100)
                         break
     
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert), 'expert': expert, 'år': år, 'tabell': tabell}
+    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert), 'expert': expert, 'tabell': tabell}
 
 
 #print(calculate_tax('2019','30',apportion_expert(50000,100000),150000,0))
@@ -240,6 +245,20 @@ def onetimetax(år, expert, yearly_income, netto=0,brutto=0):
                         break
 
     return {'skatt': skatt, 'brutto': brutto, 'skattepliktig': brutto * expert, 'skattefri': brutto * (1-expert), 'netto': netto, 'total yearly gross': yearly_income + brutto,'procent':procent, 'år': år}
+
+def start_calculation_logic(netto=0,brutto=0):
+    current_employee = Employee.query.get(session['employee'])
+
+    if current_employee.expert == False:
+        expert = 1.00
+    else:
+        expert = 0.75
+
+    result = calculate_tax_table('30',expert,netto,brutto)
+        
+    return result
+
+
 '''
 one = onetimetax('2019',0.75,1800000,77286,0)
 print(one)

@@ -90,7 +90,7 @@ class AddEmployee(FlaskForm):
             emp = Employee.query.filter_by(person_nummer=person_nummer.data).first()
         
             if emp:
-                raise ValidationError('That employee is already registered, please try to select it instead.')
+                raise ValidationError('That personal number is already registered, please try to select it instead.')
 
     def validate(self):
         rv = FlaskForm.validate(self)
@@ -106,16 +106,8 @@ class AddEmployee(FlaskForm):
         return True
 
 class CalculateInitial(FlaskForm):
-    net_1 = IntegerField('Net Amount', validators=[Optional()], default = 0)
+    cash_amount = IntegerField('Cash Amount', validators=[Optional()], default = 0)
 
-    net_2 = IntegerField('Net Amount', validators=[Optional()], default = 0)
-
-    net_3 = IntegerField('Net Amount', validators=[Optional()], default = 0)
-
-    gross_1 = IntegerField('Gross Amount', validators=[Optional()], default = 0)
-
-    gross_2 = IntegerField('Gross Amount', validators=[Optional()], default = 0)
-
-    gross_3 = IntegerField('Gross Amount', validators=[Optional()], default = 0)
+    cash_type = SelectField('Cash Type', choices=[('Gross', "Gross"),('Net', "Net")], validators=[DataRequired()])
 
     submit = SubmitField('Calculate')
