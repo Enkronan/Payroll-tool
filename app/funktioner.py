@@ -11,8 +11,8 @@ from flask_login import login_user, current_user, logout_user
 
 def previous_period():
     today = datetime.date.today()
-    first = today.replace(day=1)
-    lastMonth = first - datetime.timedelta(days=1)
+    first_day_of_month = today.replace(day=1)
+    lastMonth = first_day_of_month - datetime.timedelta(days=1)
     
     result = lastMonth.strftime("%Y%m")
     
@@ -25,13 +25,13 @@ def current_period():
     return result
 
 
-def apportion_standard(earn_start, earn_end, start, end):
+def apportion_standard(earn_start, earn_end, assignment_start, assignment_end):
 
     try:
         earn_start = datetime.datetime.strptime(earn_start, '%Y-%m-%d')
         earn_end = datetime.datetime.strptime(earn_end, '%Y-%m-%d')
-        start = datetime.datetime.strptime(start, '%Y-%m-%d')
-        end = datetime.datetime.strptime(end, '%Y-%m-%d')
+        assignment_start = datetime.datetime.strptime(assignment_start, '%Y-%m-%d')
+        assignment_end = datetime.datetime.strptime(assignment_end, '%Y-%m-%d')
     except:
         return "Not proper formatting"
 
@@ -39,37 +39,37 @@ def apportion_standard(earn_start, earn_end, start, end):
     earning_days = (earn_end - earn_start).days
 
     # if person was in Sweden when earning started
-    if (earn_start - start).days > 0:
-        #if person came before earning start and left after earning end (i.e. 100% Sweden)
-        if (earn_end - end).days < 0:
+    if (earn_start - assignment_start).days > 0:
+        #if person came before earning assignment_start and left after earning assignment_end (i.e. 100% Sweden)
+        if (earn_end - assignment_end).days < 0:
             procent = 1.00
         #Person was in sweden when started but left during the period    
         else:
-            procent = (end-earn_start).days/earning_days
+            procent = (assignment_end-earn_start).days/earning_days
 
     #Person came and left during earnings period
-    elif (start - earn_start).days > 0 and (end - earn_end).days < 0:
-        procent = (end-start).days/earning_days
+    elif (assignment_start - earn_start).days > 0 and (assignment_end - earn_end).days < 0:
+        procent = (assignment_end-assignment_start).days/earning_days
     
     #Person came during earning period and stayed whole period
-    elif (start-earn_start).days > 0 and (end-earn_end).days > 0:
-        procent = (earn_end-start).days / earning_days
+    elif (assignment_start-earn_start).days > 0 and (assignment_end-earn_end).days > 0:
+        procent = (earn_end-assignment_start).days / earning_days
     
-    return {'procent': procent, 'earn_end': earn_end, 'earn_start': earn_start,'start':start, 'end':end, 'earnings days': earning_days}
+    return {'procent': procent, 'earn_end': earn_end, 'earn_start': earn_start,'assignment_start':assignment_start, 'assignment_end':assignment_end, 'earnings days': earning_days}
 
 #print(apportion_standard('2019-01-01','2019-05-01','2018-01-01','2019-04-21'))
 
 def social_security_type(social_index):
-    all_social = {}
+    all_social_security_descriptions = {}
 
     with open('socialavgifter.csv') as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
 
         for row in tabeller:
             key, value = row[0], row[2]
-            all_social[key] = value
+            all_social_security_descriptions[key] = value
     
-    return all_social[social_index]
+    return all_social_security_descriptions[social_index]
 
 #print(social_security_type('1A'))
 
@@ -106,7 +106,7 @@ print(t2-t1)
 '''
 
 def calculate_SINK(expert, netto = 0, brutto = 0):
-    procent = 0.25
+    tax_rate_sink = 0.25
 
     if not 1.00 >= expert >= 0.75:
         return "expert needs to be a value between 0.75 and 1.00"
@@ -118,11 +118,11 @@ def calculate_SINK(expert, netto = 0, brutto = 0):
         return "everything needs to be numbers"
 
     if netto > 0 :
-        skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-        gross = (netto/(1-(expert*procent))-netto)
+        skatt = (brutto * expert * tax_rate_sink) + (netto/(1-(expert*tax_rate_sink))-netto)
+        gross = (netto/(1-(expert*tax_rate_sink))-netto)
         brutto = brutto + netto + gross
     else:
-        skatt = brutto * expert * procent
+        skatt = brutto * expert * tax_rate_sink
 
     return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert), 'expert': expert}
     
@@ -175,14 +175,12 @@ def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
                             skatt = int(brutto*expert) * (skatt/100)
                         break
     
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert), 'expert': expert, 'tabell': tabell}
+    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert)}
 
-
-#print(calculate_tax('2019','30',apportion_expert(50000,100000),150000,0))
 '''
 t1 = time.time()
 for i in range(100):
-    print(calculate_tax('2019','30',apportion_expert(50000,100000),random.randint(0,15000),random.randint(0,15000)))
+    print(calculate_tax('30',apportion_expert(50000,100000),random.randint(0,15000),random.randint(0,15000)))
 t2 = time.time()
 print(t2-t1)
 '''
@@ -204,10 +202,10 @@ def socialavgifter(belopp, kod='0'):
                 procent = float(row[2])
                 avgifter = int(procent * belopp)
 
-        return {'belopp': belopp, 'procent': procent, 'avgifter': avgifter, 'kod': kod}  
+        return {'procent': procent, 'avgifter': avgifter}  
 
 
-def onetimetax(år, expert, yearly_income, netto=0,brutto=0):
+def onetimetax(expert, yearly_income, netto=0,brutto=0):
 
     if not 1.00 >= expert >= 0.75:
         return "expert needs to be a value between 0.75 and 1.00"
@@ -215,36 +213,36 @@ def onetimetax(år, expert, yearly_income, netto=0,brutto=0):
     with open('onetimetax.csv') as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
         for row in tabeller:
-            if row[0] == år:
+            if netto > 0:
+                if row[2] == '':
+                    procent = int(row[3])/100
+                    skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
+                    gross = (netto/(1-(expert*procent))-netto)
+                    brutto = brutto + netto + gross
+                    break
 
-                if netto > 0:
-                    if row[2] == '':
-                        procent = int(row[3])/100
-                        skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                        gross = (netto/(1-(expert*procent))-netto)
-                        brutto = brutto + netto + gross
-                        break
+                elif int(row[1]) <= yearly_income + (brutto*expert) + netto/(1-(expert*(int(row[3])/100))) <= int(row[2]):
+                    procent = int(row[3])/100
+                    skatt = (brutto*expert * procent) + (netto/(1-(expert*procent))-netto)
+                    gross = (netto/(1-(expert*procent))-netto)
+                    brutto = brutto + netto + gross
+                    break
+            else:
+                if row[2] == '':
+                    procent = int(row[3])/100
+                    skatt = brutto* expert * procent
+                    brutto = brutto
+                    break
 
-                    elif int(row[1]) <= yearly_income + (brutto*expert) + netto/(1-(expert*(int(row[3])/100))) <= int(row[2]):
-                        procent = int(row[3])/100
-                        skatt = (brutto*expert * procent) + (netto/(1-(expert*procent))-netto)
-                        gross = (netto/(1-(expert*procent))-netto)
-                        brutto = brutto + netto + gross
-                        break
-                else:
-                    if row[2] == '':
-                        procent = int(row[3])/100
-                        skatt = brutto* expert * procent
-                        brutto = brutto
-                        break
+                elif int(row[1]) <= yearly_income + (brutto * expert) <= int(row[2]):
+                    procent = int(row[3])/100
+                    skatt = brutto * expert * procent
+                    brutto = brutto
+                    break
 
-                    elif int(row[1]) <= yearly_income + (brutto * expert) <= int(row[2]):
-                        procent = int(row[3])/100
-                        skatt = brutto * expert * procent
-                        brutto = brutto
-                        break
+    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto * expert, 'skattefri': brutto * (1-expert), 'netto': netto, 'total yearly gross': yearly_income + brutto,'procent':procent}
 
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktig': brutto * expert, 'skattefri': brutto * (1-expert), 'netto': netto, 'total yearly gross': yearly_income + brutto,'procent':procent, 'år': år}
+
 
 def start_calculation_logic(netto=0,brutto=0):
     current_employee = Employee.query.get(session['employee'])
@@ -254,9 +252,11 @@ def start_calculation_logic(netto=0,brutto=0):
     else:
         expert = 0.75
 
-    result = calculate_tax_table('30',expert,netto,brutto)
-        
-    return result
+    result_of_calculation = calculate_tax_table('30',expert,netto,brutto)
+    social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
+    result_of_calculation["avgifter"] = social_security_charges["avgifter"]
+
+    return result_of_calculation
 
 
 '''
@@ -265,33 +265,13 @@ print(one)
 print(socialavgifter(one['skattepliktig']))
 
 
-
-
-
 t1 = time.time()
 for i in range(1000):
     print(onetimetax('2019',0.75,random.randint(0,1500000),random.randint(0,150000),random.randint(0,150000)))
 t2 = time.time()
 print(t2-t1)
 '''
-if __name__ == "__main__":
-    '''
-    func = input("Which function do you want to call? net_to_gross or skattetabell: ")
 
-    if func == "skattetabell":
-        år = input("Which tax table year?")
-        tabell = input("Which tax table?")
-        brutto = int(input("What gross amount?"))
-
-        print(skattetabell(år,tabell,brutto))
-
-    elif func == "net_to_gross":
-        net = input("What net amount")
-        percentage = input("What tax percentage")
-        expert = bool(input("Expert? Provide True or False"))
-
-        print(net_to_gross(net,percentage,expert))
-    '''
 
 
     
