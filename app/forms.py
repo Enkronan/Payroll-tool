@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import StringField, PasswordField, IntegerField, SubmitField, BooleanField, SelectField, DateField
+from wtforms import StringField, PasswordField, IntegerField, SubmitField, BooleanField, SelectField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
 from app.models import User, Employee, Company
 from app.validators import Unique
@@ -69,6 +69,8 @@ class AddEmployee(FlaskForm):
 
     person_nummer = IntegerField('Personal Number', validators=[Optional()])
 
+    skattetabell = SelectField('Skattetabell', choices=[('29', '29'),('30','30'),('31','31')], validators=[DataRequired()])
+
     expat_type = SelectField('Expat Type', choices=[('Outbound', "Outbound"),('Inbound', "Inbound")], validators=[DataRequired()])
 
     assign_start = DateField('entry date', format='%Y-%m-%d', validators=[Optional()])
@@ -127,3 +129,8 @@ class UpdateAccountForm(FlaskForm):
             
             if user:
                 raise ValidationError('That username is taken, please choose a different one.')
+
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')

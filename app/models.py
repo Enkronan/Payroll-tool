@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(30), unique = True, nullable = False)
     password = db.Column(db.String(60), nullable=False)
+    posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}')"
@@ -29,6 +30,7 @@ class Employee(db.Model):
     first_name = db.Column(db.String(60), nullable = False)
     last_name = db.Column(db.String(60), nullable = False)
     person_nummer = db.Column(db.Integer, unique = True)
+    skattetabell = db.Column(db.String(60), nullable = False)
     expat_type = db.Column(db.String(60), nullable = False)
     assign_start = db.Column(db.DateTime)
     assign_end = db.Column(db.DateTime)
@@ -41,3 +43,12 @@ class Employee(db.Model):
     def __repr__(self):
         return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}', '{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}')"      
 
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(150), nullable = False)
+    date_posted = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
+    content = db.Column(db.Text, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')" 

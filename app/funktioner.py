@@ -260,7 +260,7 @@ def start_calculation_logic(netto=0,brutto=0):
         social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
         result_of_calculation["avgifter"] = social_security_charges["avgifter"]
     else:
-        result_of_calculation = calculate_tax_table('30',expert,netto,brutto)
+        result_of_calculation = calculate_tax_table(current_employee.skattetabell,expert,netto,brutto)
         social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
         result_of_calculation["avgifter"] = social_security_charges["avgifter"]
 

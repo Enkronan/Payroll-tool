@@ -1,8 +1,8 @@
 from app import app, db
 from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from app.helpers import apology, login_required, lookup
-from app.models import User, Company, Employee
-from app.forms import RegistrationForm, LoginForm, AddCompany, AddEmployee, CalculateInitial, UpdateAccountForm
+from app.models import User, Company, Employee, Post
+from app.forms import RegistrationForm, LoginForm, AddCompany, AddEmployee, CalculateInitial, UpdateAccountForm, PostForm
 from app.funktioner import apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter, onetimetax, social_security_type, previous_period, current_period, start_calculation_logic
 from flask_login import login_user, current_user, logout_user
 
@@ -14,8 +14,8 @@ import re
 @login_required
 def home():
 
-    all_companies = Company.query.all()
-    return render_template("company1.html", rows = all_companies)
+    posts = Post.query.all()
+    return render_template("home.html", posts = posts)
     
 
 @app.route("/company",methods=["GET", "POST"])
@@ -124,7 +124,7 @@ def add_employee():
             flash('You need to pick a company first!', 'danger')
             return redirect(url_for('company'))
 
-        emp_to_add = Employee(first_name = form.first_name.data, last_name = form.last_name.data, person_nummer = form.person_nummer.data, expat_type = form.expat_type.data, assign_start = form.assign_start.data, assign_end = form.assign_end.data, expert = form.expert.data, sink = form.sink.data, six_month_rule = form.six_month_rule.data, social_security = form.social_security.data, company = current_company) 
+        emp_to_add = Employee(first_name = form.first_name.data, last_name = form.last_name.data, person_nummer = form.person_nummer.data, skattetabell = form.skattetabell.data, expat_type = form.expat_type.data, assign_start = form.assign_start.data, assign_end = form.assign_end.data, expert = form.expert.data, sink = form.sink.data, six_month_rule = form.six_month_rule.data, social_security = form.social_security.data, company = current_company) 
 
         db.session.add(emp_to_add)
         db.session.commit()
@@ -193,9 +193,24 @@ def account():
 
     elif request.method == 'GET':
         form.username.data = current_user.username
-        
+
     return render_template('account.html', title='Account', form = form)
 
+
+@app.route("/agenda", methods=["GET", "POST"])
+@login_required
+def agenda():
+
+    form = PostForm()
+    if form.validate_on_submit():
+
+        post = Post(title=form.title.data, content = form.content.data, author = current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('agenda.html', title='Agenda', form = form)
 
 
 def errorhandler(e):
