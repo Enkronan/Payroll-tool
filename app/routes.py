@@ -2,7 +2,7 @@ from app import app, db
 from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from app.helpers import apology, login_required, lookup
 from app.models import User, Company, Employee
-from app.forms import RegistrationForm, LoginForm, AddCompany, AddEmployee, CalculateInitial
+from app.forms import RegistrationForm, LoginForm, AddCompany, AddEmployee, CalculateInitial, UpdateAccountForm
 from app.funktioner import apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter, onetimetax, social_security_type, previous_period, current_period, start_calculation_logic
 from flask_login import login_user, current_user, logout_user
 
@@ -41,8 +41,7 @@ def employee():
 
     if request.method == "POST":
 
-        selected_employee = request.form.get('employee')
-        session['employee'] = Employee.query.filter_by(first_name = selected_employee).first().id
+        session['employee'] = int(request.form.get('employee'))
            
         return redirect(url_for('calculate'))
     else:
@@ -179,6 +178,25 @@ def logout():
 
     # Redirect user to login form
     return redirect(url_for('home'))
+
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+
+    form = UpdateAccountForm()
+
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        db.session.commit()
+        flash('your account has been updated!', 'success')
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        
+    return render_template('account.html', title='Account', form = form)
+
+
 
 def errorhandler(e):
     """Handle error"""

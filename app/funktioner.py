@@ -140,6 +140,9 @@ def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     except:
         return "everything needs to be numbers"
 
+    if netto < 1 and brutto < 1:
+            return {'skatt': 0, 'brutto': 0, 'skattepliktigt': 0, 'skattefri': 0, 'skattesats': 0}
+
     with open('tabeller.csv') as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
 
@@ -252,9 +255,14 @@ def start_calculation_logic(netto=0,brutto=0):
     else:
         expert = 0.75
 
-    result_of_calculation = calculate_tax_table('30',expert,netto,brutto)
-    social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
-    result_of_calculation["avgifter"] = social_security_charges["avgifter"]
+    if current_employee.sink == True:
+        result_of_calculation = calculate_SINK(expert,netto,brutto)
+        social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
+        result_of_calculation["avgifter"] = social_security_charges["avgifter"]
+    else:
+        result_of_calculation = calculate_tax_table('30',expert,netto,brutto)
+        social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
+        result_of_calculation["avgifter"] = social_security_charges["avgifter"]
 
     return result_of_calculation
 
