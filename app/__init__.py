@@ -8,15 +8,25 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from tempfile import mkdtemp
 from flask_login import LoginManager
-
+from flask_mail import Mail
 
 #SETTING UP FLASK_APP
 app = Flask(__name__)
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-#WAIT TO SEE IF NEEDED
 app.config["SECRET_KEY"] = '8b204a070795bf8203b56a5258d7bcc6'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///site.db'
+
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
+mail = Mail(app)
+
+from app import routes
 
 '''
 If i dont want to use cookies; use the text below and then also include {{ form.csrf_token }} in templates.
@@ -35,10 +45,3 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 '''
-
-##THIS IS WHERE THE DB GOES
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///site.db'
-db = SQLAlchemy(app)
-login_manager = LoginManager(app)
-
-from app import routes
