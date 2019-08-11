@@ -9,6 +9,9 @@ class RegistrationForm(FlaskForm):
     username = StringField('username', 
                             validators=[DataRequired(), Length(min=2, max=30)])
 
+    email = StringField('Email',
+                            validators=[DataRequired(), Email()])
+
     password = PasswordField('password',
                             validators=[DataRequired()])
     
@@ -24,10 +27,17 @@ class RegistrationForm(FlaskForm):
         if user:
             raise ValidationError('That username is taken, please choose a different one.')
 
+    def validate_email(self, email):
+        
+        user = User.query.filter_by(email=email.data).first()
+        
+        if user:
+            raise ValidationError('That email is taken, please choose a different one.')
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', 
-                            validators=[DataRequired(), Length(min=2, max=30)])
+
+    email = StringField('Email',
+                            validators=[DataRequired(), Email()])
 
     password = PasswordField('Password',
                             validators=[DataRequired()])
@@ -120,6 +130,9 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('username', 
                             validators=[DataRequired(), Length(min=2, max=30)])
 
+    email = StringField('Email',
+                            validators=[DataRequired(), Email()])                           
+
     submit = SubmitField('Update')
 
     def validate_username(self, username):
@@ -129,6 +142,14 @@ class UpdateAccountForm(FlaskForm):
             
             if user:
                 raise ValidationError('That username is taken, please choose a different one.')
+
+    def validate_email(self, email):
+        
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            
+            if user:
+                raise ValidationError('That email is taken, please choose a different one.')                
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])

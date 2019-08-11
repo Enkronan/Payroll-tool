@@ -11,10 +11,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import re
 
 @app.route("/")
+@app.route("/home")
 @login_required
 def home():
 
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page = page, per_page = 5)
     return render_template("home.html", posts = posts)
     
 
@@ -62,13 +64,13 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
 
         if user and check_password_hash(user.password, form.password.data):
             login_user(user,remember=form.remember.data)
             return redirect(url_for('home'))
         else:
-            flash('Login Unsuccesfull. Please check username and password', 'danger')
+            flash('Login Unsuccesfull. Please check email and password', 'danger')
 
     return render_template("login1.html", title='Login', form=form)
 
@@ -85,7 +87,7 @@ def register():
 
         hash_1 = generate_password_hash(form.password.data, method='pbkdf2:sha256')
 
-        user = User(username = form.username.data, password = hash_1) 
+        user = User(username = form.username.data,email = form.email.data, password = hash_1) 
         db.session.add(user)
         db.session.commit()
 
@@ -187,12 +189,14 @@ def account():
 
     if form.validate_on_submit():
         current_user.username = form.username.data
+        current_user.email = form.email.data
         db.session.commit()
         flash('your account has been updated!', 'success')
         return redirect(url_for('account'))
 
     elif request.method == 'GET':
         form.username.data = current_user.username
+        form.email.data = current_user.email
 
     return render_template('account.html', title='Account', form = form)
 
@@ -248,6 +252,16 @@ def delete_post(post_id):
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
 
+@app.route("/user/<string:username>")
+@login_required
+def user_posts(username):
+
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page = page, per_page = 5)
+    return render_template("user_post.html", posts = posts, user = user)
 
 
 def errorhandler(e):
