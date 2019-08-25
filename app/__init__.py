@@ -26,7 +26,13 @@ app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
 mail = Mail(app)
 
-from app import routes
+from app.users.routes import users
+from app.posts.routes import posts
+from app.main.routes import main
+
+app.register_blueprint(users)
+app.register_blueprint(posts)
+app.register_blueprint(main)
 
 '''
 If i dont want to use cookies; use the text below and then also include {{ form.csrf_token }} in templates.

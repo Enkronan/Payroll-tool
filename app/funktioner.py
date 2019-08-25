@@ -4,10 +4,9 @@ import datetime
 import time
 import random
 
-from app import app, db
-from flask import flash, jsonify, redirect, render_template, request, session, url_for
-from app.models import User, Company, Employee
-from flask_login import login_user, current_user, logout_user
+from app import app
+from flask import session
+from app.models import Employee
 
 def previous_period():
     today = datetime.date.today()
