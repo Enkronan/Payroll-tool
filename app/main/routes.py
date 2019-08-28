@@ -134,13 +134,14 @@ def calculate():
 
     return render_template("calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
 
+'''
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
 
-'''
+
 # Listen for errors
 for code in default_exceptions:
     current_app.errorhandler(code)(errorhandler)
