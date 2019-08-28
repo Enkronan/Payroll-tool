@@ -54,9 +54,10 @@ def apportion_standard(earn_start, earn_end, assignment_start, assignment_end):
     elif (assignment_start-earn_start).days > 0 and (assignment_end-earn_end).days > 0:
         procent = (earn_end-assignment_start).days / earning_days
     
-    return {'procent': procent, 'earn_end': earn_end, 'earn_start': earn_start,'assignment_start':assignment_start, 'assignment_end':assignment_end, 'earnings days': earning_days}
+    return {'procent': procent, 'earn_end': earn_end, 'earn_start': earn_start,'assignment_start':assignment_start, 'assignment_end':assignment_end,
+             'earnings days': earning_days}
 
-#print(apportion_standard('2019-01-01','2019-05-01','2018-01-01','2019-04-21'))
+print(apportion_standard('2019-01-01','2019-05-01','2018-01-01','2019-04-21'))
 
 def social_security_type(social_index):
     all_social_security_descriptions = {}
@@ -94,20 +95,6 @@ def apportion_expert(expert,normal):
 
     return calculated_expert
 
-#print(apportion_expert(50000,50000))
-
-'''
-#Testcases
-t1 = time.time()
-print(apportion_standard('2018-01-01','2019-01-01','2017-03-03','2018-07-01')['procent'])
-print(apportion_standard('2018-01-01','2019-01-01','2017-03-03','2019-07-01'))
-print(apportion_standard('2018-01-01','2019-01-01','2018-03-03','2018-07-01'))
-print(apportion_standard('2018-01-01','2019-01-01','2018-03-03','2019-07-01'))
-t2 = time.time()
-
-print(t2-t1)
-'''
-
 def calculate_SINK(expert, netto = 0, brutto = 0):
     tax_rate_sink = 0.25
 
@@ -127,10 +114,9 @@ def calculate_SINK(expert, netto = 0, brutto = 0):
     else:
         skatt = brutto * expert * tax_rate_sink
 
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert), 'expert': expert}
+    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert),
+     'skattesats': skatt/(brutto*expert), 'expert': expert}
     
-
-#print(calculate_SINK(0.75,77286,0))
 
 def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     
@@ -187,13 +173,6 @@ def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     
     return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert)}
 
-'''
-t1 = time.time()
-for i in range(100):
-    print(calculate_tax('30',apportion_expert(50000,100000),random.randint(0,15000),random.randint(0,15000)))
-t2 = time.time()
-print(t2-t1)
-'''
 
 def socialavgifter(belopp, kod='0'):
 
@@ -258,7 +237,8 @@ def onetimetax(expert, yearly_income, netto=0,brutto=0):
                     brutto = brutto
                     break
 
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto * expert, 'skattefri': brutto * (1-expert), 'netto': netto, 'total yearly gross': yearly_income + brutto,'procent':procent}
+    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto * expert, 'skattefri': brutto * (1-expert),
+     'netto': netto, 'total yearly gross': yearly_income + brutto,'procent':procent}
 
 
 
@@ -282,18 +262,6 @@ def start_calculation_logic(netto=0,brutto=0):
     return result_of_calculation
 
 
-'''
-one = onetimetax('2019',0.75,1800000,77286,0)
-print(one)
-print(socialavgifter(one['skattepliktig']))
-
-
-t1 = time.time()
-for i in range(1000):
-    print(onetimetax('2019',0.75,random.randint(0,1500000),random.randint(0,150000),random.randint(0,150000)))
-t2 = time.time()
-print(t2-t1)
-'''
 
 
 

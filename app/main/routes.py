@@ -65,7 +65,8 @@ def add_company():
 
     form = AddCompany()
     if form.validate_on_submit():
-        comp_to_add = Company(company_name = form.company_name.data, org_number = form.org_number.data, permanent_establishment = form.permanent_establishment.data) 
+        comp_to_add = Company(company_name = form.company_name.data, org_number = form.org_number.data,
+                             permanent_establishment = form.permanent_establishment.data) 
 
         db.session.add(comp_to_add)
         db.session.commit()
@@ -90,7 +91,10 @@ def add_employee():
             flash('You need to pick a company first!', 'danger')
             return redirect(url_for('main.company'))
 
-        emp_to_add = Employee(first_name = form.first_name.data, last_name = form.last_name.data, person_nummer = form.person_nummer.data, skattetabell = form.skattetabell.data, expat_type = form.expat_type.data, assign_start = form.assign_start.data, assign_end = form.assign_end.data, expert = form.expert.data, sink = form.sink.data, six_month_rule = form.six_month_rule.data, social_security = form.social_security.data, company = current_company) 
+        emp_to_add = Employee(first_name = form.first_name.data, last_name = form.last_name.data, person_nummer = form.person_nummer.data,
+                             skattetabell = form.skattetabell.data, expat_type = form.expat_type.data, assign_start = form.assign_start.data,
+                             assign_end = form.assign_end.data, expert = form.expert.data, sink = form.sink.data, six_month_rule = form.six_month_rule.data,
+                             social_security = form.social_security.data, company = current_company) 
 
         db.session.add(emp_to_add)
         db.session.commit()
