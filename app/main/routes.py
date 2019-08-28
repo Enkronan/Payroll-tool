@@ -1,13 +1,10 @@
-import os
-import re
-
 from app.helpers import apology, login_required
 from app.models import Post
 
 from app import db
 from app.models import User, Company, Employee, Post
-from app.forms import AddCompany, AddEmployee, CalculateInitial
-from app.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
+from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial
+from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
 from flask import flash, jsonify, redirect, session, url_for, render_template, request, Blueprint, current_app                        

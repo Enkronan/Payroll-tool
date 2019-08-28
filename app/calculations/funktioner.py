@@ -3,6 +3,7 @@ from datetime import date
 import datetime
 import time
 import random
+import os
 
 from flask import session, current_app
 from app.models import Employee
@@ -60,7 +61,11 @@ def apportion_standard(earn_start, earn_end, assignment_start, assignment_end):
 def social_security_type(social_index):
     all_social_security_descriptions = {}
 
-    with open('socialavgifter.csv') as csvfile:
+    script_dir = os.path.dirname(__file__)
+    rel_path = "socialavgifter.csv"
+    abs_file_path = os.path.join(script_dir,rel_path)
+
+    with open(abs_file_path) as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
 
         for row in tabeller:
@@ -129,6 +134,10 @@ def calculate_SINK(expert, netto = 0, brutto = 0):
 
 def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     
+    script_dir = os.path.dirname(__file__)
+    rel_path = "tabeller.csv"
+    abs_file_path = os.path.join(script_dir,rel_path)
+
     if not 1.00 >= expert >= 0.75:
         return "expert needs to be a value between 0.75 and 1.00"
 
@@ -141,7 +150,7 @@ def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     if netto < 1 and brutto < 1:
             return {'skatt': 0, 'brutto': 0, 'skattepliktigt': 0, 'skattefri': 0, 'skattesats': 0}
 
-    with open('tabeller.csv') as csvfile:
+    with open(abs_file_path) as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
 
         for row in tabeller:
@@ -190,12 +199,16 @@ def socialavgifter(belopp, kod='0'):
 
     avgifter = 0
 
+    script_dir = os.path.dirname(__file__)
+    rel_path = "socialavgifter.csv"
+    abs_file_path = os.path.join(script_dir,rel_path)
+    
     try:
         belopp = int(belopp)
     except:
         return "belopp needs to be an int"
 
-    with open('socialavgifter.csv') as csvfile:
+    with open(abs_file_path) as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
 
         for row in tabeller:
@@ -208,10 +221,14 @@ def socialavgifter(belopp, kod='0'):
 
 def onetimetax(expert, yearly_income, netto=0,brutto=0):
 
+    script_dir = os.path.dirname(__file__)
+    rel_path = "onetimetax.csv"
+    abs_file_path = os.path.join(script_dir,rel_path)
+
     if not 1.00 >= expert >= 0.75:
         return "expert needs to be a value between 0.75 and 1.00"
 
-    with open('onetimetax.csv') as csvfile:
+    with open(abs_file_path) as csvfile:
         tabeller = csv.reader(csvfile, delimiter=";")
         for row in tabeller:
             if netto > 0:
