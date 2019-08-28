@@ -4,8 +4,7 @@ import datetime
 import time
 import random
 
-from app import app
-from flask import session
+from flask import session, current_app
 from app.models import Employee
 
 def previous_period():

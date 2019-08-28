@@ -1,7 +1,3 @@
-import os
-import time
-import datetime
-from datetime import datetime
 
 from flask import Flask, session
 from flask_session import Session
@@ -9,30 +5,31 @@ from flask_sqlalchemy import SQLAlchemy
 from tempfile import mkdtemp
 from flask_login import LoginManager
 from flask_mail import Mail
+from app.config import Config
 
-#SETTING UP FLASK_APP
-app = Flask(__name__)
+#extensions
+db = SQLAlchemy()
+login_manager = LoginManager()
+mail = Mail()
 
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config["SECRET_KEY"] = '8b204a070795bf8203b56a5258d7bcc6'
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///site.db'
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)  
 
-db = SQLAlchemy(app)
-login_manager = LoginManager(app)
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
-app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
-mail = Mail(app)
+    db.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
 
-from app.users.routes import users
-from app.posts.routes import posts
-from app.main.routes import main
+    from app.users.routes import users
+    from app.posts.routes import posts
+    from app.main.routes import main
 
-app.register_blueprint(users)
-app.register_blueprint(posts)
-app.register_blueprint(main)
+    app.register_blueprint(users)
+    app.register_blueprint(posts)
+    app.register_blueprint(main)
+
+    return app
+
 
 '''
 If i dont want to use cookies; use the text below and then also include {{ form.csrf_token }} in templates.

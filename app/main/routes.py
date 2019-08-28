@@ -4,13 +4,13 @@ import re
 from app.helpers import apology, login_required
 from app.models import Post
 
-from app import app, db
+from app import db
 from app.models import User, Company, Employee, Post
 from app.forms import AddCompany, AddEmployee, CalculateInitial
 from app.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
-from flask import flash, jsonify, redirect, session, url_for, render_template, request, Blueprint                        
+from flask import flash, jsonify, redirect, session, url_for, render_template, request, Blueprint, current_app                        
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
 
@@ -143,7 +143,8 @@ def errorhandler(e):
         e = InternalServerError()
     return apology(e.name, e.code)
 
-
+'''
 # Listen for errors
 for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)
+    current_app.errorhandler(code)(errorhandler)
+'''
