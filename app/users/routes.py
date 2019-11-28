@@ -56,7 +56,7 @@ def logout():
     logout_user()
 
     # Redirect user to login form
-    return redirect(url_for('main.home'))
+    return redirect(url_for('users.login'))
 
 
 @users.route("/account", methods=["GET", "POST"])

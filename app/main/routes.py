@@ -1,14 +1,12 @@
-from app.helpers import apology, login_required
-from app.models import Post
+from flask import flash, redirect, session, url_for, render_template, request, Blueprint
+
+from app.helpers import login_required
 
 from app import db
-from app.models import User, Company, Employee, Post
+from app.models import Company, Employee
 from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
-
-from flask import flash, jsonify, redirect, session, url_for, render_template, request, Blueprint, current_app                        
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
 
 main = Blueprint('main', __name__)
@@ -17,11 +15,7 @@ main = Blueprint('main', __name__)
 @main.route("/home")
 @login_required
 def home():
-
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page = page, per_page = 5)
-    return render_template("home.html", posts = posts)
-    
+    return render_template("home.html")
 
 @main.route("/company",methods=["GET", "POST"])
 @login_required
@@ -50,8 +44,8 @@ def employee():
            
         return redirect(url_for('main.calculate'))
     else:
-        
-        try: 
+
+        try:
             get_company = Company.query.filter_by(company_name = session['current_company']).first().expats
         except:
             flash('You need to pick a company first!', 'danger')
@@ -121,7 +115,7 @@ def calculate():
         cash_type = form.cash_type.data
 
         if cash_type == 'Net':
-            result = start_calculation_logic(cash_amount,0)
+            result = start_calculation_logic(cash_amount, 0)
             return render_template("result.html", result = result)
         else:
             result = start_calculation_logic(0,cash_amount)
@@ -137,16 +131,3 @@ def calculate():
 
 
     return render_template("calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
-
-'''
-def errorhandler(e):
-    """Handle error"""
-    if not isinstance(e, HTTPException):
-        e = InternalServerError()
-    return apology(e.name, e.code)
-
-
-# Listen for errors
-for code in default_exceptions:
-    current_app.errorhandler(code)(errorhandler)
-'''
