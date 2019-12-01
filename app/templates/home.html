@@ -5,4 +5,39 @@
 {% endblock %}
 
 {% block main %}
+
+    <table class="table table-hover table-dark">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Company Name</th>
+                <th scope="col">Organization number</th>
+                <th scope="col">Permanent Establishment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in company.items %}
+                <tr data-href="{{ url_for('main.chosen_company', company_id=item.id) }}"> 
+                    <th scope="row">{{ item.id }}</th>
+                    <td> <a href="{{ url_for('main.chosen_company', company_id=item.id) }}"> {{ item.company_name }}</a> </td>
+                    <td>{{ item.org_number }}</td>
+                    <td>{{ item.permanent_establishment }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% for page_num in company.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if page_num %}
+        {% if company.page == page_num %}
+            <a class="btn btn-info mb-4" href= "{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+            <a class="btn btn-outline-info mb-4" href= "{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}     
+    {% else %}
+
+    {% endif %}
+    {% endfor %}
+
 {% endblock %}
+
+

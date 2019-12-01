@@ -15,24 +15,19 @@ main = Blueprint('main', __name__)
 @main.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
 
-@main.route("/company",methods=["GET", "POST"])
-@login_required
-def company():
+    page = request.args.get('page', 1, type=int)
+    all_companies = Company.query.paginate(page = page, per_page = 5)
+    return render_template("home.html",company = all_companies)
 
-    if request.method == "POST":
-        selected_company = request.form.get('company')
+@main.route("/home/<int:company_id>")
+def chosen_company(company_id):
+    company = Company.query.get_or_404(company_id)
 
-        get_company = Company.query.filter_by(company_name = selected_company).first()
+    get_company = Company.query.filter_by(id = company.id).first()
+    session['current_company'] = get_company.company_name
 
-        session['current_company'] = get_company.company_name
-
-        return render_template("employee.html", rows = get_company.expats) 
-    
-    else:
-        all_companies = Company.query.all()
-        return render_template("company1.html", rows = all_companies)
+    return render_template("employee.html", rows = get_company.expats) 
 
 @main.route("/employee",methods=["GET", "POST"])
 @login_required
@@ -49,7 +44,7 @@ def employee():
             get_company = Company.query.filter_by(company_name = session['current_company']).first().expats
         except:
             flash('You need to pick a company first!', 'danger')
-            return redirect(url_for('main.company'))
+            return redirect(url_for('main.home'))
 
         return render_template("employee.html", rows = get_company)
 

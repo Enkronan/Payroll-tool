@@ -17,6 +17,21 @@ main
     text-align: center;
 }
 
+main label{
+
+    display: flex;
+    text-align: left;
+
+}
+
+.form-check{
+    display: flex;
+}
+
+main .form-group legend{
+    text-align: center;
+}
+
 main img
 {
     /* constrain images on small screens */
@@ -51,6 +66,10 @@ nav .navbar-brand .yellow
 nav .navbar-brand .green
 {
     color: #2e944b;
+}
+
+main .pt-3{
+    margin:1em;
 }
 
 .content-section {
