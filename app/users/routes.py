@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session
 from flask_login import login_user, current_user, logout_user, login_required
 from app import db
 from app.models import User, Post
@@ -52,6 +52,7 @@ def register():
 def logout():
 
     # Forget any user_id
+    session.clear()
     logout_user()
 
     # Redirect user to login form

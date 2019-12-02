@@ -27,26 +27,31 @@ def chosen_company(company_id):
     get_company = Company.query.filter_by(id = company.id).first()
     session['current_company'] = get_company.company_name
 
-    return render_template("employee.html", rows = get_company.expats) 
+    return redirect(url_for('main.employee'))
 
-@main.route("/employee",methods=["GET", "POST"])
+@main.route("/employee")
 @login_required
 def employee():
 
-    if request.method == "POST":
+    page = request.args.get('page', 1, type=int)
 
-        session['employee'] = int(request.form.get('employee'))
-           
-        return redirect(url_for('main.calculate'))
-    else:
+    try:
+        get_company = Company.query.filter_by(company_name = session['current_company']).first()
+        all_employees = Employee.query.filter_by(company = get_company.id).paginate(page = page, per_page = 5)
+    except:
+        flash('You need to pick a company first!', 'danger')
+        return redirect(url_for('main.home'))
 
-        try:
-            get_company = Company.query.filter_by(company_name = session['current_company']).first().expats
-        except:
-            flash('You need to pick a company first!', 'danger')
-            return redirect(url_for('main.home'))
+    return render_template("employee_grid.html",employees = all_employees, company = get_company)
 
-        return render_template("employee.html", rows = get_company)
+@main.route("/employee/<int:employee_id>")
+def chosen_employee(employee_id):
+    employee = Employee.query.get_or_404(employee_id)
+
+    get_employee = Employee.query.filter_by(id = employee.id).first()
+    session['employee'] = get_employee.id
+
+    return redirect(url_for('main.calculate'))
 
 @main.route("/add_company", methods=["GET", "POST"])
 @login_required

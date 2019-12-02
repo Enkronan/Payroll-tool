@@ -80,6 +80,11 @@ main .pt-3{
     margin-bottom: 25px;
   }
 
+.titlebar-container{
+    display:flex;
+    margin-bottom: 1em;
+}
+
 #Change_password
 {
     /* constrain images on small screens */
