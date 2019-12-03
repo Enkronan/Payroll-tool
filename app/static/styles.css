@@ -1,3 +1,9 @@
+body{
+    background-image: url(img/background1.jpg);
+    background-size: cover;
+    background-repeat: repeat-y;
+    color: white;
+}
 main .form-control
 {
     /* center form controls */
@@ -15,6 +21,11 @@ main
 
     /* center contents */
     text-align: center;
+
+}
+.div-background-white{
+    background: white;
+    padding: 1em;
 }
 
 main label{
@@ -68,6 +79,33 @@ nav .navbar-brand .green
     color: #2e944b;
 }
 
+#second_navbar{
+    background-color: green;
+}
+
+#nav-start{
+    color:white;
+    justify-content: left;
+}
+
+#nav-settings{
+    color:white;
+}
+
+#nav-employees{
+    color:white;
+}
+
+.nav_heading{
+    color:white;
+    padding: 10px;
+}
+
+#add-employee-button{
+    text-align:left;
+    padding-bottom:5px;
+}
+
 main .pt-3{
     margin:1em;
 }
@@ -83,6 +121,15 @@ main .pt-3{
 .titlebar-container{
     display:flex;
     margin-bottom: 1em;
+    color:white;
+}
+
+.btn{
+    font-size: 1rem;
+}
+
+.article-content{
+    color:black;
 }
 
 #Change_password

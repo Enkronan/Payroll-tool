@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <!-- https://favicon.io/emoji-favicons/money-mouth-face/ -->
+        <link href="app//static/favicon.jpg" rel="icon">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+        <title>Summer extension : {% block title %}{% endblock %}</title>
+
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="/"><span class="blue">$</span><span class="red">I</span><span class="green">M</span><span class="blue">P</span><span class="red">L</span><span class="green">E</span></a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                {% if current_user.is_authenticated %}
+                    <ul class="navbar-nav mr-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.add_company') }}">Add Company</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.employee') }}">Employees</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.calculate') }}">Calculate</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('posts.home_post') }}">Posts</a></li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('posts.new_post') }}">Create Post</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/account">Account</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('users.register') }}">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('users.login') }}">Log In</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+
+        <main>
+            <ul class="nav justify-content-center" id="second_navbar">
+                <h4 class="nav_heading"><a href="#" id="nav-start">Start</a></h4>
+                <h4 class="nav_heading"><a href="#" id="nav-settings">Settings</a></h4>
+                <h4 class="nav_heading"><a href="{{ url_for('main.employee') }}" id="nav-employees">Employees</a></h4>
+            </ul>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block main %}{% endblock %}
+        </main>
+
+    </body>
+
+</html>
