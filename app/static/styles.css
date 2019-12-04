@@ -132,6 +132,10 @@ main .pt-3{
     color:black;
 }
 
+.modal-content{
+    padding:15px;
+    color:black;
+}
 #Change_password
 {
     /* constrain images on small screens */
