@@ -76,6 +76,32 @@ class AddEmployee(FlaskForm):
         
         return True
 
+class EditEmployee(FlaskForm):
+    first_name = StringField('First Name', 
+                            validators=[DataRequired(), Length(min=2, max=40)])
+
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=40)])
+
+    person_nummer = IntegerField('Personal Number', validators=[Optional()])
+
+    skattetabell = SelectField('Skattetabell', choices=[('29', '29'),('30','30'),('31','31')], validators=[DataRequired()])
+
+    expat_type = SelectField('Expat Type', choices=[('Outbound', "Outbound"),('Inbound', "Inbound")], validators=[DataRequired()])
+
+    assign_start = DateField('entry date', format='%Y-%m-%d', validators=[Optional()])
+
+    assign_end = DateField('exit date', format='%Y-%m-%d', validators=[Optional()])
+
+    expert = BooleanField('Expert')
+
+    sink = BooleanField('sink')
+
+    six_month_rule = BooleanField('six_month_rule')
+
+    social_security = SelectField('Expat Type', choices=[('1A', "utsänd till Kanada, Usa, Indien, Sydkorea")], validators=[DataRequired()])
+
+    submit = SubmitField('Edit Employee')
+
 class CalculateInitial(FlaskForm):
     cash_amount = IntegerField('Cash Amount', validators=[Optional()], default = 0)
 

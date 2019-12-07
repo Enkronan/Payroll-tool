@@ -28,11 +28,12 @@
             </thead>
             <tbody>
                 {% for item in employees.items %}
-                    <tr data-href="{{ url_for('main.chosen_employee', employee_id=item.id) }}"> 
+                    <tr> 
                         <th scope="row">{{ item.id }}</th>
-                        <td> <a href="{{ url_for('main.chosen_employee', employee_id=item.id) }}"> {{ item.first_name }}</a> </td>
+                        <td>{{ item.first_name }}</td>
                         <td>{{ item.last_name }}</td>
                         <td>{{ item.person_nummer }}</td>
+                        <td><button type="button" class="btn btn-primary" onclick="editEmployee('{{ url_for('main.editEmployeeForm', employee_id=item.id) }}')">Edit Employee</button></td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -190,6 +191,7 @@
     </div>
 </div>
 
+
 <script>
 $('#uform').click(function(event) {
     event.preventDefault();
@@ -204,7 +206,16 @@ $('#uform').click(function(event) {
       }
     });
 })
-</script>
 
+function editEmployee(url){
+      $.get(url, function(data) {
+        $('#myModal .modal-content').html(data);
+        $('#myModal').modal();
+      });
+    }
+      
+
+
+</script>
 
 {% endblock %}

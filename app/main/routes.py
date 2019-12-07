@@ -4,7 +4,7 @@ from app.helpers import login_required
 
 from app import db
 from app.models import Company, Employee
-from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial
+from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
@@ -87,6 +87,52 @@ def employeeForm():
         flash('the employee has been added! You can now start calculating', 'success')
         return jsonify(status="ok")
     return render_template("addEmployeeForm.html", form = form)
+
+@main.route("/editEmployeeForm/<int:employee_id>", methods=["GET", "POST"])
+@login_required
+def editEmployeeForm(employee_id):
+    form = EditEmployee()
+    if form.validate_on_submit():
+
+        try:
+            current_company = Company.query.filter_by(company_name = session['current_company']).first().id
+        except:
+            flash('You need to pick a company first!', 'danger')
+            return redirect(url_for('main.home'))
+
+        try:
+            employee = Employee.query.get_or_404(employee_id)
+        except:
+            flash('Employee not found!', 'danger')
+            return redirect(url_for('main.home'))
+
+        employee.first_name = form.first_name.data
+        employee.last_name = form.last_name.data
+        employee.person_nummer = form.person_nummer.data
+        employee.skattetabell = form.skattetabell.data
+        employee.expat_type = form.expat_type.data
+        employee.assign_start = form.assign_start.data
+        employee.assign_end = form.assign_end.data
+        employee.expert = form.expert.data
+        employee.sink = form.sink.data
+        employee.six_month_rule = form.six_month_rule.data
+        employee.social_security = form.social_security.data
+        employee.company = current_company 
+
+        db.session.commit()
+
+        flash('the employee has been updated! You can now start calculating', 'success')
+        return jsonify(status="ok")
+
+    elif request.method == 'GET':
+        employee = Employee.query.get_or_404(employee_id)
+        get_employee = Employee.query.filter_by(id = employee.id).first()
+        form.first_name.data = get_employee.first_name
+        form.last_name.data = get_employee.last_name
+
+    return render_template("editEmployee.html", form = form, employee = employee)
+
+
 
 @main.route("/employee/<int:employee_id>")
 def chosen_employee(employee_id):
