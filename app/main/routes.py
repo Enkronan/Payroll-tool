@@ -35,24 +35,6 @@ def employee():
 
     page = request.args.get('page', 1, type=int)
     form = AddEmployee()
-    if form.validate_on_submit():
-
-        try:
-            current_company = Company.query.filter_by(company_name = session['current_company']).first().id
-        except:
-            flash('You need to pick a company first!', 'danger')
-            return redirect(url_for('main.home'))
-
-        emp_to_add = Employee(first_name = form.first_name.data, last_name = form.last_name.data, person_nummer = form.person_nummer.data,
-                             skattetabell = form.skattetabell.data, expat_type = form.expat_type.data, assign_start = form.assign_start.data,
-                             assign_end = form.assign_end.data, expert = form.expert.data, sink = form.sink.data, six_month_rule = form.six_month_rule.data,
-                             social_security = form.social_security.data, company = current_company) 
-
-        db.session.add(emp_to_add)
-        db.session.commit()
-
-        flash('the employee has been added! You can now start calculating', 'success')
-        return jsonify(status="ok")
 
     try:
         get_company = Company.query.filter_by(company_name = session['current_company']).first()
