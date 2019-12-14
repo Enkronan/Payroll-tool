@@ -1,0 +1,71 @@
+{% extends "layout_no_container.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+<div class="row flex-end">
+
+</div>
+<div class="container p-5 own-cont">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">General Settings</a>
+            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Payroll Logic</a>
+            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Team Access</a>
+        </div>
+    </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="form-group">
+                            <form action="/settings" method="post">
+                                {{ form.hidden_tag() }}
+                                <fieldset class="form-group">
+                                    <legend class="border-bottom mb-4"> Add Company! </legend>
+                                    <div class="form-group">
+                                        {{ form.company_name.label(class="form-control-label") }}
+                    
+                                        {% if form.company_name.errors %}
+                                            {{ form.company_name(class="form-control form-control-lg is-invalid") }}    
+                                            <div class="invalid-feedback">
+                                                {% for error in form.company_name.errors %}
+                                                    <span>{{ error }} </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.company_name(class="form-control form-control-lg") }}
+                                        {% endif %}                      
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.org_number.label(class="form-control-label") }}
+                                        {% if form.org_number.errors %}
+                                            {{ form.org_number(class="form-control form-control-lg is-invalid") }}    
+                                            <div class="invalid-feedback">
+                                                {% for error in form.org_number.errors %}
+                                                    <span>{{ error }} </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.org_number(class="form-control form-control-lg") }}
+                                        {% endif %}  
+                                    </div>
+                                    <div class="form-check">
+                                        {{ form.permanent_establishment(class="form-check-input") }}
+                                        {{ form.permanent_establishment.label(class="form-check-label") }}
+                                    </div>
+                                </fieldset>
+                                <div class="form-group">
+                                    {{ form.submit(class="btn btn-outline-info")}}
+                                </div>
+                            </form>
+                        </div>
+            
+            </div>
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
+            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+        </div>
+
+</div>
+
+{% endblock %}

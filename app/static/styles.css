@@ -101,6 +101,32 @@ nav .navbar-brand .green
     padding: 10px;
 }
 
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    background-color: white;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: white;
+    cursor:default;
+    background-color: #62b5e5;
+    border:1px solid #ddd;
+    border-bottom-color: transparent;
+}
+
+.nav-tabs .nav-link{
+    background-color: white;
+    color:black;
+}
+
+.tab-content{
+    background-color: white;
+    color:black;
+    padding:10px;
+}
+
 #add-employee-button{
     text-align:left;
     padding-bottom:5px;
@@ -140,5 +166,9 @@ main .pt-3{
 {
     /* constrain images on small screens */
     padding: 20px;
+}
+
+.own-cont{
+    max-width: inherit;
 }
 

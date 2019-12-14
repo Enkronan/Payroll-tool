@@ -4,7 +4,7 @@ from app.helpers import login_required
 
 from app import db
 from app.models import Company, Employee
-from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee
+from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
@@ -142,6 +142,42 @@ def add_company():
         return redirect(url_for('main.add_employee'))
 
     return render_template("add_company.html", form=form, title='Company')
+
+
+
+@main.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+
+    edit_form = EditCompany()
+    if edit_form.validate_on_submit():
+        try:
+            current_company = Company.query.filter_by(company_name = session['current_company']).first()
+        except:
+            flash('Some error with chosen company', 'danger')
+
+        current_company.company_name = edit_form.company_name.data
+        current_company.org_number = edit_form.org_number.data
+        current_company.permanent_establishment = edit_form.permanent_establishment.data
+
+        db.session.commit()
+        session['current_company'] = edit_form.company_name.data
+
+        flash('the company has been edited!', 'success')
+        return redirect(url_for('main.settings'))
+
+    try:
+        current_company = Company.query.filter_by(company_name = session['current_company']).first()
+        edit_form.company_name.data = current_company.company_name
+        edit_form.org_number.data = current_company.org_number
+        edit_form.permanent_establishment.data = current_company.permanent_establishment
+
+    except:
+        flash('Some error with chosen company2', 'danger')
+        return redirect(url_for('main.home'))
+
+    return render_template("company_settings.html", current_company = current_company, form = edit_form)
+
 
 @main.route("/calculate", methods=["GET", "POST"])
 @login_required

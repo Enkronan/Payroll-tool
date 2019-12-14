@@ -29,6 +29,16 @@ class AddCompany(FlaskForm):
             if comp:
                 raise ValidationError('That org number is already registered, please try to select it instead.')
     
+class EditCompany(FlaskForm):
+    company_name = StringField('company name', 
+                            validators=[DataRequired(), Length(min=2, max=40)])
+
+    org_number = StringField('org number', validators=[Optional()])
+
+    permanent_establishment = BooleanField('PE')
+
+    submit = SubmitField('Edit company')
+
 class AddEmployee(FlaskForm):
     first_name = StringField('First Name', 
                             validators=[DataRequired(), Length(min=2, max=40)])

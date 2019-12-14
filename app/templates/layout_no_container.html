@@ -34,10 +34,10 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if current_user.is_authenticated %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.add_company') }}">Add Company</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.employee') }}">Employees</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.calculate') }}">Calculate</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('posts.home_post') }}">Posts</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.home') }}">Companies</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.add_company') }}">Add Company</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.calculate') }}">Calculate</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('posts.home_post') }}">Posts</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('posts.new_post') }}">Create Post</a></li>
@@ -56,7 +56,7 @@
         <main>
             <ul class="nav justify-content-center" id="second_navbar">
                 <h4 class="nav_heading"><a href="#" id="nav-start">Start</a></h4>
-                <h4 class="nav_heading"><a href="#" id="nav-settings">Settings</a></h4>
+                <h4 class="nav_heading"><a href="{{ url_for('main.settings') }}" id="nav-settings">Settings</a></h4>
                 <h4 class="nav_heading"><a href="{{ url_for('main.employee') }}" id="nav-employees">Employees</a></h4>
             </ul>
             {% with messages = get_flashed_messages(with_categories=true) %}
