@@ -172,3 +172,9 @@ main .pt-3{
     max-width: inherit;
 }
 
+.btn-outline-info {
+    background-color: white;
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
