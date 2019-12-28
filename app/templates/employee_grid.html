@@ -5,10 +5,18 @@
 {% endblock %}
 
 {% block main %}
-
+<ul class="nav justify-content-center" id="second_navbar">
+    {% if company %}
+        <h4 class="nav_heading"><a class="nav-heading" id="nav-start" href="{{ url_for('main.company_start') }}">Start</a></h4>
+        <h4 class="nav_heading"><a class="nav-heading" id="nav-settings" href="{{ url_for('main.settings') }}">Settings</a></h4>
+        <h4 class="nav_heading"><a class="nav-heading active-nav" id="nav-employees" href="{{ url_for('main.employee') }}">Employees</a></h4>
+    {% else %}
+        <h4 class="nav_heading disabled-nav"><a>Start</a></h4>
+        <h4 class="nav_heading active-nav"><a>Settings</a></h4>
+        <h4 class="nav_heading disabled-nav"><a>Employees</a></h4>
+    {% endif %}
+</ul>
 <div class="container p-5">
-            
-        
         <div class="titlebar-container">
             <div class="titlebar">
                 <h1 class="title">{{ company.company_name }}</h1>

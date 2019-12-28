@@ -28,6 +28,10 @@ main
     padding: 1em;
 }
 
+.alert{
+    margin-bottom: 0px;
+}
+
 main label{
 
     display: flex;
@@ -41,6 +45,11 @@ main label{
 
 main .form-group legend{
     text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    padding-top: 2px;
 }
 
 main img
@@ -79,8 +88,11 @@ nav .navbar-brand .green
     color: #2e944b;
 }
 
+
+
 #second_navbar{
     background-color: green;
+    justify-content: center;
 }
 
 #nav-start{
@@ -116,9 +128,42 @@ nav .navbar-brand .green
     border-bottom-color: transparent;
 }
 
-.nav-tabs .nav-link{
+.nav-tabs>li.active>a
+{
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+
+.nav-tabs>li{
+    margin-bottom: -1px;
+}
+
+.nav-tabs .nav-link {
     background-color: white;
-    color:black;
+    color: black;
+    margin-bottom: -1px;
+    border-bottom: 1px solid #ddd;
+}
+
+.active-nav{
+    text-decoration: underline white;
+}
+
+.disabled-nav{
+    color: gray;
+}
+
+.bg-dark {
+    background-color: #000000!important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: white;
+    font-family: sans-serif;
+    font-size: 18px;
 }
 
 .tab-content{
@@ -137,7 +182,7 @@ main .pt-3{
 }
 
 .content-section {
-    background: #dddddd;
+    background: #ffffff;
     padding: 10px 20px;
     border: 1px solid #dddddd;
     border-radius: 3px;

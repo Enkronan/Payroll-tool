@@ -126,8 +126,11 @@
                             {% endif %}  
                         </div>
                     </fieldset>
-                    <div class="form-group">
-                        {{ form.submit(class="btn btn-outline-info", id="submit")}}
+                    <div class="modal-footer">                
+                        <div class="form-group">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            {{ form.submit(class="btn btn-primary", id="submit")}}
+                        </div>
                     </div>
                 </form>
             </div>

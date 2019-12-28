@@ -73,7 +73,8 @@ def employeeForm():
 @main.route("/editEmployeeForm/<int:employee_id>", methods=["GET", "POST"])
 @login_required
 def editEmployeeForm(employee_id):
-    form = EditEmployee()
+    employee = Employee.query.get_or_404(employee_id)
+    form = EditEmployee(obj=employee)
     if form.validate_on_submit():
 
         try:
@@ -88,28 +89,12 @@ def editEmployeeForm(employee_id):
             flash('Employee not found!', 'danger')
             return redirect(url_for('main.home'))
 
-        employee.first_name = form.first_name.data
-        employee.last_name = form.last_name.data
-        employee.person_nummer = form.person_nummer.data
-        employee.skattetabell = form.skattetabell.data
-        employee.expat_type = form.expat_type.data
-        employee.assign_start = form.assign_start.data
-        employee.assign_end = form.assign_end.data
-        employee.expert = form.expert.data
-        employee.sink = form.sink.data
-        employee.six_month_rule = form.six_month_rule.data
-        employee.social_security = form.social_security.data
-        employee.company = current_company 
+        form.populate_obj(employee)
 
         db.session.commit()
 
         flash('the employee has been updated! You can now start calculating', 'success')
         return jsonify(status="ok")
-
-    elif request.method == 'GET':
-        employee = Employee.query.get_or_404(employee_id)
-        form.first_name.data = employee.first_name
-        form.last_name.data = employee.last_name
 
     return render_template("editEmployee.html", form = form, employee = employee)
 
@@ -129,6 +114,8 @@ def chosen_employee(employee_id):
 def add_company():
 
     form = AddCompany()
+    session["current_company"] = ""
+
     if form.validate_on_submit():
         comp_to_add = Company(company_name = form.company_name.data, org_number = form.org_number.data,
                              permanent_establishment = form.permanent_establishment.data) 
@@ -139,9 +126,9 @@ def add_company():
         session['current_company'] = form.company_name.data
 
         flash('the company has been created! You can now add employees', 'success')
-        return redirect(url_for('main.add_employee'))
+        return redirect(url_for('main.employee'))
 
-    return render_template("add_company.html", form=form, title='Company')
+    return render_template("company_settings.html", form=form, current_company = False, title='Company')
 
 
 
@@ -149,32 +136,24 @@ def add_company():
 @login_required
 def settings():
 
-    edit_form = EditCompany()
+    try:
+        current_company = Company.query.filter_by(company_name = session['current_company']).first()
+        edit_form = EditCompany(obj=current_company)
+    except:
+        edit_form = EditCompany()
+
     if edit_form.validate_on_submit():
         try:
             current_company = Company.query.filter_by(company_name = session['current_company']).first()
         except:
             flash('Some error with chosen company', 'danger')
 
-        current_company.company_name = edit_form.company_name.data
-        current_company.org_number = edit_form.org_number.data
-        current_company.permanent_establishment = edit_form.permanent_establishment.data
-
+        edit_form.populate_obj(current_company)
         db.session.commit()
         session['current_company'] = edit_form.company_name.data
 
         flash('the company has been edited!', 'success')
         return redirect(url_for('main.settings'))
-
-    try:
-        current_company = Company.query.filter_by(company_name = session['current_company']).first()
-        edit_form.company_name.data = current_company.company_name
-        edit_form.org_number.data = current_company.org_number
-        edit_form.permanent_establishment.data = current_company.permanent_establishment
-
-    except:
-        flash('Some error with chosen company2', 'danger')
-        return redirect(url_for('main.home'))
 
     return render_template("company_settings.html", current_company = current_company, form = edit_form)
 
@@ -206,3 +185,17 @@ def calculate():
 
 
     return render_template("calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
+
+@main.route("/company_start", methods=["GET", "POST"])
+@login_required
+def company_start():
+
+    form = AddEmployee()
+
+    try:
+        current_company = Company.query.filter_by(company_name = session['current_company']).first()
+    except:
+        flash('You need to pick a company first!', 'danger')
+        return render_template("company_start.html")
+
+    return render_template("company_start.html", current_company = current_company, form = form)
