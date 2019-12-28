@@ -120,6 +120,16 @@ class CalculateInitial(FlaskForm):
     submit = SubmitField('Calculate')
     
 
+class PayItems(FlaskForm):
+    pay_item = StringField('Pay Item Name', 
+                            validators=[DataRequired(), Length(min=2, max=40)])
+
+    tax_setting =  SelectField('Tax Settings', choices=[('Cash', "Cash"),('Benefit', "Benefit")], validators=[DataRequired()])
+
+    cash_type = SelectField('Cash Type', choices=[('Gross', "Gross"),('Net', "Net")], validators=[DataRequired()])
+
+    submit = SubmitField('Add Pay Item')
+
 
 
 

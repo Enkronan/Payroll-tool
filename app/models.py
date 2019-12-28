@@ -39,6 +39,7 @@ class Company(db.Model):
     org_number = db.Column(db.String(60))
     permanent_establishment = db.Column(db.Boolean, nullable=False)
     expats = db.relationship('Employee', backref='employee', lazy=True)
+    pay_items = db.relationship('PayItem', backref='pay_items', lazy=True)
 
     def __repr__(self):
         return f"Company('{self.company_name}', '{self.org_number}','{self.permanent_establishment}')" 
@@ -69,4 +70,14 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}')" 
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+class PayItem(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    pay_item = db.Column(db.String(150), nullable = False)
+    tax_setting = db.Column(db.String(60), nullable = False)
+    cash_type = db.Column(db.String(60), nullable = False)
+    company = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Pay Item('{self.pay_item}', '{self.tax_setting}')" 

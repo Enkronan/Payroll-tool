@@ -172,7 +172,7 @@ nav .navbar-brand .green
     padding:10px;
 }
 
-#add-employee-button{
+.left-align-button{
     text-align:left;
     padding-bottom:5px;
 }

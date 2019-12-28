@@ -45,7 +45,7 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.person_nummer(class="form-control form-control-lg") }}
+                                {{ form.person_nummer(class="form-control form-control-lg", placeholder="YYMMDD-XXXX") }}
                             {% endif %}  
                         </div>
                         <div class="form-group">
@@ -84,7 +84,7 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.assign_start(class="form-control form-control-lg") }}
+                                {{ form.assign_start(class="form-control form-control-lg", placeholder="YYYY-MM-DD") }}
                             {% endif %}  
                         </div>
                         <div class="form-group">
@@ -97,7 +97,7 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.assign_end(class="form-control form-control-lg") }}
+                                {{ form.assign_end(class="form-control form-control-lg", placeholder="YYYY-MM-DD") }}
                             {% endif %}  
                         </div>
                         <div class="form-check">

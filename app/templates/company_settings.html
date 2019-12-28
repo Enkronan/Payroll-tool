@@ -21,7 +21,7 @@
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">General Settings</a>
             <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Payroll Logic</a>
-            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Team Access</a>
+            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Pay Items</a>
         </div>
     </nav>
         <div class="tab-content" id="nav-tabContent">
@@ -82,9 +82,83 @@
             
             </div>
             <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
-            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                <div class="left-align-button">
+                        <button type="button" class="btn btn-primary" onclick="payItem('{{ url_for('main.pay_item') }}')">Add Pay Item</button>
+                </div>
+                <table class="table table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Pay Item</th>
+                            <th scope="col">Tax Setting</th>
+                            <th scope="col">Cash Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if pay_items %}
+                            {% for item in pay_items.items %}
+                                <tr> 
+                                    <td>{{ item.pay_item }}</td>
+                                    <td>{{ item.tax_setting }}</td>
+                                    <td>{{ item.cash_type }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% for page_num in pay_items.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if page_num %}
+                    {% if pay_items.page == page_num %}
+                        <a class="btn btn-info mb-4" href= "{{ url_for('main.settings', page=page_num) }}">{{ page_num }}</a>
+                    {% else %}
+                        <a class="btn btn-outline-info mb-4" href= "{{ url_for('main.settings', page=page_num) }}">{{ page_num }}</a>
+                    {% endif %}     
+                {% else %}
+        
+                {% endif %}
+                {% endfor %}
+
+                <div class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="myModal">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+            
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 </div>
+
+<script>
+
+
+
+    $('#uform').click(function(event) {
+        event.preventDefault();
+        var url = "{{ url_for('main.pay_item') }}"
+        $.post(url, data=$('#editForm').serialize(), function(data) {
+          if (data.status == 'ok') {
+            $('#myModal').modal('hide');
+            location.reload();
+          }
+          else {
+            $('#myModal .modal-content').html(data);
+          }
+        });
+    })
+    
+    function payItem(url){
+          $.get(url, function(data) {
+            $('#myModal .modal-content').html(data);
+            $('#myModal').modal();
+          });
+        }
+          
+    
+    
+    </script>
 
 {% endblock %}
