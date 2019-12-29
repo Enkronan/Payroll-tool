@@ -73,19 +73,6 @@
 
 
 
-$('#uform').click(function(event) {
-    event.preventDefault();
-    var url = "{{ url_for('main.employeeForm') }}"
-    $.post(url, data=$('#editForm').serialize(), function(data) {
-      if (data.status == 'ok') {
-        $('#myModal').modal('hide');
-        location.reload();
-      }
-      else {
-        $('#myModal .modal-content').html(data);
-      }
-    });
-})
 
 function editEmployee(url){
       $.get(url, function(data) {

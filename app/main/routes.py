@@ -126,9 +126,9 @@ def add_company():
         session['current_company'] = form.company_name.data
 
         flash('the company has been created! You can now add employees', 'success')
-        return redirect(url_for('main.employee'))
+        return redirect(url_for('main.settings'))
 
-    return render_template("company_settings.html", form=form, current_company = False, title='Company')
+    return render_template("company_settings.html", form=form, current_company = False, title='Company', pay_items = False)
 
 
 
@@ -146,7 +146,7 @@ def settings():
         page = request.args.get('page', 1, type=int)
         pay_items = PayItem.query.filter_by(company = current_company.id).paginate(page = page, per_page = 5)
     except:
-        pay_items = None
+        pay_items = False
 
     if edit_form.validate_on_submit():
         try:
@@ -227,3 +227,17 @@ def pay_item():
         flash('the pay item has been added! You can now start calculating', 'success')
         return jsonify(status="ok")
     return render_template("payItemForm.html", form = form)
+
+
+@main.route("/pay_item/<int:pay_id>/delete", methods=["GET", "POST"])
+@login_required
+def delete_pay_item(pay_id):
+
+    if request.method == 'POST':
+        chosen_item = PayItem.query.get_or_404(pay_id)
+        db.session.delete(chosen_item)
+        db.session.commit()
+
+        return jsonify(status="ok")
+    else:
+        return render_template("deletePayItem.html",pay_id = pay_id)
