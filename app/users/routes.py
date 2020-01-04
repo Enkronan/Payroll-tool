@@ -76,7 +76,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
 
-    return render_template('account.html', title='Account', form=form)
+    return render_template('account/account.html', title='Account', form=form)
 
 @users.route("/user/<string:username>")
 @login_required

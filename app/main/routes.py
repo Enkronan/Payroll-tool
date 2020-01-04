@@ -18,7 +18,7 @@ def home():
 
     page = request.args.get('page', 1, type=int)
     all_companies = Company.query.paginate(page = page, per_page = 5)
-    return render_template("home.html",company = all_companies)
+    return render_template("company/home.html",company = all_companies)
 
 @main.route("/home/<int:company_id>")
 def chosen_company(company_id):
@@ -43,7 +43,7 @@ def employee():
         flash('You need to pick a company first!', 'danger')
         return redirect(url_for('main.home'))
 
-    return render_template("employee_grid.html",employees = all_employees, company = get_company, form = form)
+    return render_template("employees/employee_grid.html",employees = all_employees, company = get_company, form = form)
 
 @main.route("/employeeForm", methods=["GET", "POST"])
 @login_required
@@ -68,7 +68,7 @@ def employeeForm():
 
         flash('the employee has been added! You can now start calculating', 'success')
         return jsonify(status="ok")
-    return render_template("addEmployeeForm.html", form = form)
+    return render_template("modalForms/addEmployeeForm.html", form = form)
 
 @main.route("/editEmployeeForm/<int:employee_id>", methods=["GET", "POST"])
 @login_required
@@ -96,7 +96,7 @@ def editEmployeeForm(employee_id):
         flash('the employee has been updated! You can now start calculating', 'success')
         return jsonify(status="ok")
 
-    return render_template("editEmployee.html", form = form, employee = employee)
+    return render_template("modalForms/editEmployee.html", form = form, employee = employee)
 
 
 
@@ -128,7 +128,7 @@ def add_company():
         flash('the company has been created! You can now add employees', 'success')
         return redirect(url_for('main.settings'))
 
-    return render_template("company_settings.html", form=form, current_company = False, title='Company', pay_items = False)
+    return render_template("company/company_settings.html", form=form, current_company = False, title='Company', pay_items = False)
 
 
 
@@ -161,7 +161,7 @@ def settings():
         flash('the company has been edited!', 'success')
         return redirect(url_for('main.settings'))
 
-    return render_template("company_settings.html", current_company = current_company, form = edit_form, pay_items = pay_items)
+    return render_template("company/company_settings.html", current_company = current_company, form = edit_form, pay_items = pay_items)
 
 
 @main.route("/calculate", methods=["GET", "POST"])
@@ -176,10 +176,10 @@ def calculate():
 
         if cash_type == 'Net':
             result = start_calculation_logic(cash_amount, 0)
-            return render_template("result.html", result = result)
+            return render_template("calculations/result.html", result = result)
         else:
             result = start_calculation_logic(0,cash_amount)
-            return render_template("result.html", result = result)
+            return render_template("calculations/result.html", result = result)
 
     try:
         current_employee = Employee.query.get(session['employee'])
@@ -190,7 +190,7 @@ def calculate():
         return redirect(url_for('main.employee'))
 
 
-    return render_template("calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
+    return render_template("calculations/calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
 
 @main.route("/company_start", methods=["GET", "POST"])
 @login_required
@@ -202,9 +202,9 @@ def company_start():
         current_company = Company.query.filter_by(company_name = session['current_company']).first()
     except:
         flash('You need to pick a company first!', 'danger')
-        return render_template("company_start.html")
+        return render_template("company/company_start.html")
 
-    return render_template("company_start.html", current_company = current_company, form = form)
+    return render_template("company/company_start.html", current_company = current_company, form = form)
 
 
 @main.route("/pay_item", methods=["GET", "POST"])
@@ -226,7 +226,7 @@ def pay_item():
 
         flash('the pay item has been added! You can now start calculating', 'success')
         return jsonify(status="ok")
-    return render_template("payItemForm.html", form = form)
+    return render_template("modalForms/payItemForm.html", form = form)
 
 
 @main.route("/pay_item/<int:pay_id>/delete", methods=["GET", "POST"])
@@ -240,4 +240,4 @@ def delete_pay_item(pay_id):
 
         return jsonify(status="ok")
     else:
-        return render_template("deletePayItem.html",pay_id = pay_id)
+        return render_template("modalForms/deletePayItem.html",pay_id = pay_id)
