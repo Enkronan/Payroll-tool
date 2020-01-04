@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import StringField, PasswordField, IntegerField, SubmitField, BooleanField, SelectField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
-from app.models import User, Employee, Company
+from app.models import User, Employee, Company, EmployeePayItem
 
 class AddCompany(FlaskForm):
     company_name = StringField('company name', 

@@ -25,6 +25,7 @@ def chosen_company(company_id):
     company = Company.query.get_or_404(company_id)
 
     get_company = Company.query.filter_by(id = company.id).first()
+   
     session['current_company'] = get_company.company_name
 
     return redirect(url_for('main.employee'))
@@ -38,7 +39,7 @@ def employee():
 
     try:
         get_company = Company.query.filter_by(company_name = session['current_company']).first()
-        all_employees = Employee.query.filter_by(company = get_company.id).paginate(page = page, per_page = 5)
+        all_employees = Employee.query.filter_by(company_id = get_company.id).paginate(page = page, per_page = 5)
     except:
         flash('You need to pick a company first!', 'danger')
         return redirect(url_for('main.home'))
@@ -61,7 +62,7 @@ def employeeForm():
         emp_to_add = Employee(first_name = form.first_name.data, last_name = form.last_name.data, person_nummer = form.person_nummer.data,
                              skattetabell = form.skattetabell.data, expat_type = form.expat_type.data, assign_start = form.assign_start.data,
                              assign_end = form.assign_end.data, expert = form.expert.data, sink = form.sink.data, six_month_rule = form.six_month_rule.data,
-                             social_security = form.social_security.data, company = current_company) 
+                             social_security = form.social_security.data, company_id = current_company) 
 
         db.session.add(emp_to_add)
         db.session.commit()
@@ -144,7 +145,7 @@ def settings():
 
     try:
         page = request.args.get('page', 1, type=int)
-        pay_items = PayItem.query.filter_by(company = current_company.id).paginate(page = page, per_page = 5)
+        pay_items = PayItem.query.filter_by(company_id = current_company.id).paginate(page = page, per_page = 5)
     except:
         pay_items = False
 
@@ -220,7 +221,7 @@ def pay_item():
             flash('You need to pick a company first!', 'danger')
             return redirect(url_for('main.home'))
 
-        pay_item = PayItem(pay_item = form.pay_item.data, tax_setting = form.tax_setting.data, cash_type = form.cash_type.data, company = current_company) 
+        pay_item = PayItem(pay_item = form.pay_item.data, tax_setting = form.tax_setting.data, cash_type = form.cash_type.data, company_id = current_company) 
         db.session.add(pay_item)
         db.session.commit()
 

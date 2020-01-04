@@ -38,8 +38,8 @@ class Company(db.Model):
     company_name = db.Column(db.String(60), unique = True, nullable = False)
     org_number = db.Column(db.String(60))
     permanent_establishment = db.Column(db.Boolean, nullable=False)
-    expats = db.relationship('Employee', backref='employee', lazy=True)
-    pay_items = db.relationship('PayItem', backref='pay_items', lazy=True)
+    expats = db.relationship('Employee', backref='company', lazy=True)
+    pay_items = db.relationship('PayItem', backref='company', lazy=True)
 
     def __repr__(self):
         return f"Company('{self.company_name}', '{self.org_number}','{self.permanent_establishment}')" 
@@ -57,8 +57,8 @@ class Employee(db.Model):
     sink = db.Column(db.Boolean, nullable=False)
     six_month_rule = db.Column(db.Boolean, nullable=False)
     social_security = db.Column(db.String(60), nullable = False)
-    company = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
-    pay_items = db.relationship('EmployeePayItem', backref='pay_items', lazy=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
+    pay_items = db.relationship('EmployeePayItem', backref='employee', lazy=True)
     
     def __repr__(self):
         return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}', '{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}')"      
@@ -74,18 +74,20 @@ class Post(db.Model):
         return f"Post('{self.title}', '{self.date_posted}')"
 
 class PayItem(db.Model):
+    __tablename__ = 'payitem'
     id = db.Column(db.Integer, primary_key = True)
     pay_item = db.Column(db.String(150), nullable = False)
     tax_setting = db.Column(db.String(60), nullable = False)
     cash_type = db.Column(db.String(60), nullable = False)
-    company = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+    employee_pay_items = db.relationship('EmployeePayItem', backref='payitem', lazy=True)
 
     def __repr__(self):
         return f"Pay Item('{self.pay_item}', '{self.tax_setting}')" 
 
 class EmployeePayItem(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    pay_item = db.Column(db.String(150), nullable = False)
+    pay_item_id = db.Column(db.Integer, db.ForeignKey('payitem.id'), nullable=False)
     amount = db.Column(db.String(60), nullable = False)
     currency = db.Column(db.String(60), nullable = False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
