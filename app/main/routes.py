@@ -3,7 +3,7 @@ from flask import flash, redirect, session, url_for, render_template, request, B
 from app.helpers import login_required
 
 from app import db
-from app.models import Company, Employee, PayItem
+from app.models import Company, Employee, PayItem, EmployeePayItem
 from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany, PayItems
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)

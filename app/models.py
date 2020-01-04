@@ -58,6 +58,7 @@ class Employee(db.Model):
     six_month_rule = db.Column(db.Boolean, nullable=False)
     social_security = db.Column(db.String(60), nullable = False)
     company = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
+    pay_items = db.relationship('EmployeePayItem', backref='pay_items', lazy=True)
     
     def __repr__(self):
         return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}', '{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}')"      
@@ -81,3 +82,10 @@ class PayItem(db.Model):
 
     def __repr__(self):
         return f"Pay Item('{self.pay_item}', '{self.tax_setting}')" 
+
+class EmployeePayItem(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    pay_item = db.Column(db.String(150), nullable = False)
+    amount = db.Column(db.String(60), nullable = False)
+    currency = db.Column(db.String(60), nullable = False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)

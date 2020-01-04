@@ -57,7 +57,7 @@ def apportion_standard(earn_start, earn_end, assignment_start, assignment_end):
     return {'procent': procent, 'earn_end': earn_end, 'earn_start': earn_start,'assignment_start':assignment_start, 'assignment_end':assignment_end,
              'earnings days': earning_days}
 
-print(apportion_standard('2019-01-01','2019-05-01','2018-01-01','2019-04-21'))
+#print(apportion_standard('2019-01-01','2019-05-01','2018-01-01','2019-04-21'))
 
 def social_security_type(social_index):
     all_social_security_descriptions = {}
