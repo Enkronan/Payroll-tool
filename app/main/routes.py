@@ -274,6 +274,22 @@ def emp_pay_item(employee_id):
         to_add = EmployeePayItem(pay_item_id=chosen_item, amount = amount, currency = currency, employee_id = employee_id)
         db.session.add(to_add)
         db.session.commit()
-        return jsonify(status="ok")
+
+        item_to_return = EmployeePayItem.query.filter_by(pay_item_id = chosen_item, amount = amount).first()
+        company_pay_item = PayItem.query.filter_by(id=item_to_return.pay_item_id).first()
+        return jsonify(status="ok", pay_item_id=item_to_return.id, pay_item = company_pay_item.pay_item, tax_setting = company_pay_item.tax_setting, cash_type = company_pay_item.cash_type, amount = amount, currency = currency, employee_id = employee_id)
 
     return render_template("modalForms/editEmployee.html", form = form, employee = employee, emp_pay_items = emp_pay_items,company_pay_items = company_pay_items, pay_form = pay_form)
+
+@main.route("/emp_pay_item/<int:pay_id>/delete", methods=["GET", "POST"])
+@login_required
+def delete_emp_pay_item(pay_id):
+
+    if request.method == 'POST':
+        chosen_item = EmployeePayItem.query.get_or_404(pay_id)
+        db.session.delete(chosen_item)
+        db.session.commit()
+
+        return jsonify(status="ok")
+    else:
+        return jsonify(status="not ok")

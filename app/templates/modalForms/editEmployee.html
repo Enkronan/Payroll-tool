@@ -153,14 +153,15 @@
                             <th scope="col">Cash Type</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Currency</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id = "items_body">
                         {% if emp_pay_items %}
                             {% for item in emp_pay_items %}
                                 <tr class="payItemRow" id="{{item.id}}"> 
                                     {% for row in company_pay_items %}
-                                        {% if row.id == item.id %}
+                                        {% if row.id == item.pay_item_id %}
                                             <td>{{ row.pay_item }}</td>
                                             <td>{{ row.tax_setting }}</td>
                                             <td>{{ row.cash_type }}</td>
@@ -169,6 +170,7 @@
                                     {% endfor %}
                                     <td> {{item.amount }}</td>
                                     <td> {{item.currency }}</td>
+                                    <td><button type="button" class="btn btn-danger" value="Delete" onclick="deletePayItem('{{ url_for('main.delete_emp_pay_item', pay_id=item.id) }}', {{ item.id }})">Delete</button></td>
                                 </tr>
                             {% endfor %}
                         {% else %}
@@ -233,7 +235,19 @@
         </div>
     </div>
 
-
+{% raw -%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>    
+<script id="result" type="text/x-handlebars-template">
+    <tr class="payItemRow" id="{{pay_item_id}}">
+        <td>{{pay_item}}</td>
+        <td>{{tax_setting}}</td>
+        <td>{{cash_type}}</td>
+        <td>{{amount}}</td>
+        <td>{{currency}}</td>
+        <td><button type="button" class="btn btn-danger" value="Delete" onclick="deletePayItem('/emp_pay_item/{{pay_item_id}}/delete', {{ pay_item_id }})">Delete</button></td>
+    </tr>
+</script>
+{%- endraw %}
 <script>
 
     $('#uform').click(function(event) {
@@ -255,12 +269,40 @@
         var url = "{{ url_for('main.emp_pay_item',employee_id=employee.id) }}"
         $.post(url, data=$('#payitems').serialize(), function(data) {
             if (data.status == 'ok') {
-            $('#myModal').modal('hide');
-            location.reload();
+                addTableRow(data)
+                /*$('#myModal').modal('hide');*/
+                /*location.reload();*/
             }
             else {
             $('#myModal .modal-content').html(data);
             }
         });
     })
+
+    function addTableRow(data) {
+        const template = Handlebars.compile(document.querySelector('#result').innerHTML);
+
+        const content = template({'pay_item_id': data.pay_item_id, 'pay_item':data.pay_item, 'tax_setting':data.tax_setting,'cash_type':data.cash_type, 'amount':data.amount,'currency': data.currency, 'employee_id': data.employee_id})
+        document.querySelector('#items_body').innerHTML += content;
+    }
+
+    function deletePayItem(url, pay_id){
+        $.post(url, function(data) {
+            if (data.status == 'ok') {
+                animateDel(pay_id);
+            }
+            else {
+                alert("error");
+            }
+        });
+    }
+
+    function animateDel(pay_id){
+        var element = document.getElementById(pay_id)
+        element.style.animationPlayState = 'running';
+        element.addEventListener('animationend', () =>  {
+                    element.remove();
+                });
+    }
+    
 </script>
