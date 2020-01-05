@@ -305,3 +305,35 @@ def delete_emp_pay_item(pay_id):
         return jsonify(status="ok")
     else:
         return jsonify(status="not ok")
+
+@main.route("/add_user_access", methods=["GET", "POST"])
+@login_required
+def add_user_access():
+
+    try:
+        current_company = Company.query.filter_by(company_name = session['current_company']).first()
+        edit_form = EditCompany(obj=current_company)
+    except:
+        edit_form = EditCompany()
+
+    try:
+        page = request.args.get('page', 1, type=int)
+        pay_items = PayItem.query.filter_by(company_id = current_company.id).paginate(page = page, per_page = 5)
+    except:
+        pay_items = False
+
+    authorization_form = AuthorizationForm()
+    authorized_users = current_company.users
+
+    if authorization_form.validate_on_submit():
+
+        user_to_add = User.query.filter_by(email = authorization_form.email.data).first()
+
+        user_to_add.access.append(current_company)
+        db.session.commit()
+
+        flash('the user has been provided access!', 'success')
+        return redirect(url_for('main.settings'))
+
+    return render_template("company/company_settings.html", current_company = current_company, form = edit_form,
+             pay_items = pay_items, authorization_form = authorization_form, authorized_users = authorized_users)

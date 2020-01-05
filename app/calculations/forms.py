@@ -142,6 +142,8 @@ class AuthorizationForm(FlaskForm):
     email = StringField('Email used for registration',
                             validators=[DataRequired(), Email()])
 
+    submit = SubmitField('Provide user with access')
+
     def validate_email(self, email):
         
         user = User.query.filter_by(email=email.data).first()
