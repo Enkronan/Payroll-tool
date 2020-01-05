@@ -1,10 +1,11 @@
 from flask import flash, redirect, session, url_for, render_template, request, Blueprint, jsonify
+from app.users.routes import current_user
 
 from app.helpers import login_required
 
 from app import db
-from app.models import Company, Employee, PayItem, EmployeePayItem
-from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany, PayItems, AddEmployeePayItems
+from app.models import Company, Employee, PayItem, EmployeePayItem, User
+from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
@@ -16,9 +17,9 @@ main = Blueprint('main', __name__)
 @login_required
 def home():
 
-    page = request.args.get('page', 1, type=int)
-    all_companies = Company.query.paginate(page = page, per_page = 5)
-    return render_template("company/home.html",company = all_companies)
+    user = User.query.filter_by(id=current_user.get_id()).first()
+    
+    return render_template("company/home.html",company = user.access)
 
 @main.route("/home/<int:company_id>")
 def chosen_company(company_id):
@@ -129,6 +130,13 @@ def add_company():
                              permanent_establishment = form.permanent_establishment.data) 
 
         db.session.add(comp_to_add)
+
+        db.session.commit()
+
+        added_company = Company.query.filter_by(company_name = form.company_name.data).first()
+        user = User.query.filter_by(id=current_user.get_id()).first()
+
+        user.access.append(added_company)
         db.session.commit()
 
         session['current_company'] = form.company_name.data
@@ -156,6 +164,9 @@ def settings():
     except:
         pay_items = False
 
+    authorization_form = AuthorizationForm()
+    authorized_users = current_company.users
+
     if edit_form.validate_on_submit():
         try:
             current_company = Company.query.filter_by(company_name = session['current_company']).first()
@@ -169,7 +180,8 @@ def settings():
         flash('the company has been edited!', 'success')
         return redirect(url_for('main.settings'))
 
-    return render_template("company/company_settings.html", current_company = current_company, form = edit_form, pay_items = pay_items)
+    return render_template("company/company_settings.html", current_company = current_company, form = edit_form,
+             pay_items = pay_items, authorization_form = authorization_form, authorized_users = authorized_users)
 
 
 @main.route("/calculate", methods=["GET", "POST"])

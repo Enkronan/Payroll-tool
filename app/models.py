@@ -8,12 +8,19 @@ from flask import current_app
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+access = db.Table('access',
+    db.Column('company_id', db.Integer, db.ForeignKey('company.id', primary_key=True)),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id', primary_key=True)),
+)
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(30), unique = True, nullable = False)
     email = db.Column(db.String(120), unique = True, nullable = False)
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
+    access = db.relationship('Company', secondary=access, lazy='subquery',
+        backref=db.backref('users', lazy=True))
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
@@ -31,7 +38,7 @@ class User(db.Model, UserMixin):
         return User.query.get(user_id)
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}')"
+        return f"User('{self.username}', '{self.email}', '{self.access}')"
 
 class Company(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -91,3 +98,6 @@ class EmployeePayItem(db.Model):
     amount = db.Column(db.String(60), nullable = False)
     currency = db.Column(db.String(60), nullable = False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
+
+
+

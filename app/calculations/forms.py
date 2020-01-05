@@ -138,7 +138,16 @@ class AddEmployeePayItems(FlaskForm):
         if amount.data <= 0:
             raise ValidationError('The amount needs to be more than zero.')
 
+class AuthorizationForm(FlaskForm):
+    email = StringField('Email used for registration',
+                            validators=[DataRequired(), Email()])
 
+    def validate_email(self, email):
+        
+        user = User.query.filter_by(email=email.data).first()
+        
+        if not user:
+            raise ValidationError('That email is not used, please check the spelling.')
 
 
 
