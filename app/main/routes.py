@@ -4,7 +4,7 @@ from app.helpers import login_required
 
 from app import db
 from app.models import Company, Employee, PayItem, EmployeePayItem
-from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany, PayItems
+from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany, PayItems, AddEmployeePayItems
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
@@ -75,7 +75,14 @@ def employeeForm():
 @login_required
 def editEmployeeForm(employee_id):
     employee = Employee.query.get_or_404(employee_id)
+    emp_pay_items = employee.pay_items
+
     form = EditEmployee(obj=employee)
+
+    current_company = Company.query.filter_by(company_name = session['current_company']).first()
+    company_pay_items = current_company.pay_items
+    pay_form = AddEmployeePayItems()
+
     if form.validate_on_submit():
 
         try:
@@ -97,7 +104,7 @@ def editEmployeeForm(employee_id):
         flash('the employee has been updated! You can now start calculating', 'success')
         return jsonify(status="ok")
 
-    return render_template("modalForms/editEmployee.html", form = form, employee = employee)
+    return render_template("modalForms/editEmployee.html", form = form, employee = employee, company_pay_items = company_pay_items, emp_pay_items = emp_pay_items, pay_form = pay_form)
 
 
 
@@ -198,14 +205,16 @@ def calculate():
 def company_start():
 
     form = AddEmployee()
+    pay_form = AddEmployeePayItems()
 
     try:
         current_company = Company.query.filter_by(company_name = session['current_company']).first()
+        emp_pay_items = current_company.pay_items
     except:
         flash('You need to pick a company first!', 'danger')
         return render_template("company/company_start.html")
 
-    return render_template("company/company_start.html", current_company = current_company, form = form)
+    return render_template("company/company_start.html", current_company = current_company, form = form, pay_form = pay_form, emp_pay_items = emp_pay_items)
 
 
 @main.route("/pay_item", methods=["GET", "POST"])
@@ -242,3 +251,29 @@ def delete_pay_item(pay_id):
         return jsonify(status="ok")
     else:
         return render_template("modalForms/deletePayItem.html",pay_id = pay_id)
+
+@main.route("/emp_pay_item/<int:employee_id>", methods=["GET", "POST"])
+@login_required
+def emp_pay_item(employee_id):
+
+    employee = Employee.query.get_or_404(employee_id)
+    form = EditEmployee(obj=employee)
+
+    current_company = Company.query.filter_by(company_name = session['current_company']).first()
+    company_pay_items = current_company.pay_items
+    emp_pay_items = employee.pay_items
+    pay_form = AddEmployeePayItems()
+
+    if pay_form.validate_on_submit():
+
+        chosen_item = request.form.get('payitemss')
+        amount = request.form.get('amount')
+        currency = request.form.get('currency')
+
+
+        to_add = EmployeePayItem(pay_item_id=chosen_item, amount = amount, currency = currency, employee_id = employee_id)
+        db.session.add(to_add)
+        db.session.commit()
+        return jsonify(status="ok")
+
+    return render_template("modalForms/editEmployee.html", form = form, employee = employee, emp_pay_items = emp_pay_items,company_pay_items = company_pay_items, pay_form = pay_form)

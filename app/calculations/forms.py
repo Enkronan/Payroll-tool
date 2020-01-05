@@ -130,6 +130,13 @@ class PayItems(FlaskForm):
 
     submit = SubmitField('Add Pay Item')
 
+class AddEmployeePayItems(FlaskForm):
+    amount = IntegerField('Cash Amount', validators=[DataRequired()])
+    currency = SelectField('Currency', choices=[('SEK', "SEK"),('USD', "USD")], validators=[DataRequired()])
+
+    def validate_amount(self, amount):
+        if amount.data <= 0:
+            raise ValidationError('The amount needs to be more than zero.')
 
 
 

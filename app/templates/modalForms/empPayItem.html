@@ -1,36 +1,4 @@
-{% extends "layout_no_container.html" %}
-
-{% block title %}
-    Log In
-{% endblock %}
-
-{% block main %}
-<ul class= "nav" id="second_navbar">
-    {% if current_company %}
-        <h4 class="nav_heading active-nav"><a id="nav-start" >Start</a></h4>
-        <h4 class="nav_heading"><a id="nav-settings" href="{{ url_for('main.settings') }}">Settings</a></h4>
-        <h4 class="nav_heading"><a id="nav-employees" href="{{ url_for('main.employee') }}">Employees</a></h4>
-    {% else %}
-        <h4 class="nav_heading active-nav"><a >Start</a></h4>
-        <h4 class="nav_heading disabled-nav"><a>Settings</a></h4>
-        <h4 class="nav_heading disabled-nav"><a>Employees</a></h4>
-    {% endif %}
-</ul>
-<div class="container p-5 own-cont">
-    {% if current_company %}
-        <div class="titlebar-container">
-            <div class="titlebar">
-                <h1 class="title">{{ current_company.company_name }}</h1>
-            </div>
-        </div>
-        <div class="left-align-button">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Start Month</button>
-        </div>
-        
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
+<div class="modal-header">
                 <h5 class="modal-title" id="myModalLabel">Modal title</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
@@ -259,47 +227,3 @@
                         </div>
                     </div>
                 </div>
-
-              </div>
-            </div>
-          </div>
-    {% else %}
-
-    {% endif %}
-
-    
-
-
-
-</div>
-<script>
-    $('#uform').click(function(event) {
-        event.preventDefault();
-        var url = "{{ url_for('main.employeeForm') }}"
-        $.post(url, data=$('#editForm').serialize(), function(data) {
-            if (data.status == 'ok') {
-                $('#myModal').modal('hide');
-                location.reload();
-            }
-            else {
-                $('#myModal .modal-content').html(data);
-            }
-        });
-    })
-
-    $('#submit').click(function(event) {
-        event.preventDefault();
-        var url = "{{ url_for('main.emp_pay_item',employee_id=1) }}"
-        $.post(url, data=$('#payitems').serialize(), function(data) {
-            if (data.status == 'ok') {
-            $('#myModal').modal('hide');
-            location.reload();
-            }
-            else {
-            $('#myModal .modal-content').html(data);
-            }
-        });
-    })
-</script>
-
-{% endblock %}
