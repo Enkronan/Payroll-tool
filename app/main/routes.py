@@ -1,11 +1,11 @@
 from flask import flash, redirect, session, url_for, render_template, request, Blueprint, jsonify
 from app.users.routes import current_user
 
-from app.helpers import login_required
-
 from app import db
-from app.models import Company, Employee, PayItem, EmployeePayItem, User
-from app.calculations.forms import AddCompany, AddEmployee, CalculateInitial, EditEmployee, EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm
+from app.helpers import login_required
+from app.models import Company, Employee, PayItem, EmployeePayItem, User, MonthlyPayItem, PayRun
+from app.calculations.forms import (AddCompany, AddEmployee, CalculateInitial, EditEmployee, 
+                        EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm, PayRunForm)
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
                         onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
 
@@ -21,10 +21,10 @@ def home():
     #print(user)
 
     comp = Company.query.filter_by(id = 1).first()
-    print(comp.payrun)
+    #print(comp.payrun)
 
     emp = Employee.query.filter_by(id = 1).first()
-    print(emp)
+    #print(emp)
 
     
     return render_template("company/home.html",company = user.access)
@@ -224,17 +224,16 @@ def calculate():
 @login_required
 def company_start():
 
-    form = AddEmployee()
-    pay_form = AddEmployeePayItems()
+    form = PayRunForm()
 
     try:
         current_company = Company.query.filter_by(company_name = session['current_company']).first()
-        emp_pay_items = current_company.pay_items
+        pay_runs = current_company.payroll_runs
     except:
         flash('You need to pick a company first!', 'danger')
-        return render_template("company/company_start.html")
+        return redirect(url_for('main.home'))
 
-    return render_template("company/company_start.html", current_company = current_company, form = form, pay_form = pay_form, emp_pay_items = emp_pay_items)
+    return render_template("company/company_start.html", current_company = current_company, pay_runs = pay_runs, form = form)
 
 
 @main.route("/pay_item", methods=["GET", "POST"])
@@ -345,3 +344,25 @@ def add_user_access():
 
     return render_template("company/company_settings.html", current_company = current_company, form = edit_form,
              pay_items = pay_items, authorization_form = authorization_form, authorized_users = authorized_users)
+
+
+@main.route("/payroll_run", methods=["GET", "POST"])
+@login_required
+def payroll_run():
+
+    form = PayRunForm()
+    if form.validate_on_submit():
+
+        try:
+            current_company = Company.query.filter_by(company_name = session['current_company']).first().id
+        except:
+            flash('You need to pick a company first!', 'danger')
+            return redirect(url_for('main.home'))
+
+        payroll_run = PayRun(month = form.month.data, year = form.year.data, company_id = current_company) 
+        db.session.add(payroll_run)
+        db.session.commit()
+
+        flash('the payroll run has been added! You can now start calculating', 'success')
+        return jsonify(status="ok")
+    return render_template("modalForms/payRunForm.html", form = form)

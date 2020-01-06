@@ -43,13 +43,16 @@ class AddEmployee(FlaskForm):
     first_name = StringField('First Name', 
                             validators=[DataRequired(), Length(min=2, max=40)])
 
-    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=40)])
+    last_name = StringField('Last Name', 
+                            validators=[DataRequired(), Length(min=2, max=40)])
 
     person_nummer = IntegerField('Personal Number', validators=[Optional()])
 
-    skattetabell = SelectField('Skattetabell', choices=[('29', '29'),('30','30'),('31','31')], validators=[DataRequired()])
+    skattetabell = SelectField('Skattetabell',
+                            choices=[('29', '29'),('30','30'),('31','31')], validators=[DataRequired()])
 
-    expat_type = SelectField('Expat Type', choices=[('Outbound', "Outbound"),('Inbound', "Inbound")], validators=[DataRequired()])
+    expat_type = SelectField('Expat Type', choices=[('Outbound', "Outbound"),('Inbound', "Inbound")],
+                            validators=[DataRequired()])
 
     assign_start = DateField('entry date', format='%Y-%m-%d', validators=[Optional()])
 
@@ -61,7 +64,8 @@ class AddEmployee(FlaskForm):
 
     six_month_rule = BooleanField('six_month_rule')
 
-    social_security = SelectField('Expat Type', choices=[('1A', "utsänd till Kanada, Usa, Indien, Sydkorea")], validators=[DataRequired()])
+    social_security = SelectField('Expat Type', choices=[('1A', "utsänd till Kanada, Usa, Indien, Sydkorea")],
+                            validators=[DataRequired()])
 
     submit = SubmitField('Add Employee')
 
@@ -78,7 +82,8 @@ class AddEmployee(FlaskForm):
         if not rv:
             return False
 
-        emp = Employee.query.filter_by(first_name = self.first_name.data, last_name = self.last_name.data).first()
+        emp = Employee.query.filter_by(first_name = self.first_name.data,
+                            last_name = self.last_name.data).first()
 
         if emp: 
             self.first_name.errors.append('An employee with that first name and last name is already registered, please try to select it instead.')
@@ -90,13 +95,16 @@ class EditEmployee(FlaskForm):
     first_name = StringField('First Name', 
                             validators=[DataRequired(), Length(min=2, max=40)])
 
-    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=40)])
+    last_name = StringField('Last Name', 
+                            validators=[DataRequired(), Length(min=2, max=40)])
 
     person_nummer = IntegerField('Personal Number', validators=[Optional()])
 
-    skattetabell = SelectField('Skattetabell', choices=[('29', '29'),('30','30'),('31','31')], validators=[DataRequired()])
+    skattetabell = SelectField('Skattetabell', choices=[('29', '29'),('30','30'),('31','31')], 
+                            validators=[DataRequired()])
 
-    expat_type = SelectField('Expat Type', choices=[('Outbound', "Outbound"),('Inbound', "Inbound")], validators=[DataRequired()])
+    expat_type = SelectField('Expat Type', choices=[('Outbound', "Outbound"),('Inbound', "Inbound")], 
+                            validators=[DataRequired()])
 
     assign_start = DateField('entry date', format='%Y-%m-%d', validators=[Optional()])
 
@@ -108,7 +116,8 @@ class EditEmployee(FlaskForm):
 
     six_month_rule = BooleanField('six_month_rule')
 
-    social_security = SelectField('Expat Type', choices=[('1A', "utsänd till Kanada, Usa, Indien, Sydkorea")], validators=[DataRequired()])
+    social_security = SelectField('Expat Type', choices=[('1A', "utsänd till Kanada, Usa, Indien, Sydkorea")], 
+                            validators=[DataRequired()])
 
     submit = SubmitField('Edit Employee')
 
@@ -124,15 +133,18 @@ class PayItems(FlaskForm):
     pay_item = StringField('Pay Item Name', 
                             validators=[DataRequired(), Length(min=2, max=40)])
 
-    tax_setting =  SelectField('Tax Settings', choices=[('Cash', "Cash"),('Benefit', "Benefit")], validators=[DataRequired()])
+    tax_setting =  SelectField('Tax Settings', choices=[('Cash', "Cash"),('Benefit', "Benefit")], 
+                            validators=[DataRequired()])
 
-    cash_type = SelectField('Cash Type', choices=[('Gross', "Gross"),('Net', "Net")], validators=[DataRequired()])
+    cash_type = SelectField('Cash Type', choices=[('Gross', "Gross"),('Net', "Net")], 
+                            validators=[DataRequired()])
 
     submit = SubmitField('Add Pay Item')
 
 class AddEmployeePayItems(FlaskForm):
     amount = IntegerField('Cash Amount', validators=[DataRequired()])
-    currency = SelectField('Currency', choices=[('SEK', "SEK"),('USD', "USD")], validators=[DataRequired()])
+    currency = SelectField('Currency', choices=[('SEK', "SEK"),('USD', "USD")], 
+                            validators=[DataRequired()])
 
     def validate_amount(self, amount):
         if amount.data <= 0:
@@ -151,5 +163,12 @@ class AuthorizationForm(FlaskForm):
         if not user:
             raise ValidationError('That email is not used, please check the spelling.')
 
+class PayRunForm(FlaskForm):
+    month = SelectField('Month', choices=[("January","January"),("February","February")], 
+                            validators=[DataRequired()])
+    year = SelectField('Year', choices=[("2018","2018"),("2019","2019")], 
+                            validators=[DataRequired()])
+
+    submit = SubmitField('Add Payroll Run')
 
 

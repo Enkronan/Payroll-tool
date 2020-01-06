@@ -12,12 +12,12 @@ access = db.Table('access',
     db.Column('company_id', db.Integer, db.ForeignKey('company.id', primary_key=True)),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id', primary_key=True)),
 )
-
+'''
 month_to_company = db.Table('month_to_company',
     db.Column('company_id', db.Integer, db.ForeignKey('company.id', primary_key=True)),
     db.Column('payrun_id', db.Integer, db.ForeignKey('payrun.id', primary_key=True)),
 )
-
+'''
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(30), unique = True, nullable = False)
@@ -54,6 +54,7 @@ class Company(db.Model):
 
     expats = db.relationship('Employee', backref='company', lazy=True)
     pay_items = db.relationship('PayItem', backref='company', lazy=True)
+    payroll_runs = db.relationship('PayRun', backref='company', lazy=True)
 
     def __repr__(self):
         return f"Company('{self.company_name}', '{self.org_number}','{self.permanent_establishment}')" 
@@ -130,12 +131,11 @@ class MonthlyPayItem(db.Model):
 class PayRun(db.Model):
     __tablename__ = 'payrun'
     id = db.Column(db.Integer, primary_key = True)
-    month = db.Column(db.Integer, unique = False, nullable = False)
-    year = db.Column(db.Integer, unique = False, nullable = False)
+    month = db.Column(db.String(60), nullable = False)
+    year = db.Column(db.String(60), nullable = False)
 
     monthly_pay_items = db.relationship('MonthlyPayItem', backref='payrun', lazy=True)
-    company = db.relationship('Company', secondary=month_to_company, lazy='subquery',
-        backref=db.backref('payrun', lazy=True))
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
 
     def __repr__(self):
         return f"PayRun('{self.month}', '{self.year}', '{self.company}')" 

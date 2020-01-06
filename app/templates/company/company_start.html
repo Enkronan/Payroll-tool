@@ -17,289 +17,56 @@
     {% endif %}
 </ul>
 <div class="container p-5 own-cont">
-    {% if current_company %}
         <div class="titlebar-container">
             <div class="titlebar">
                 <h1 class="title">{{ current_company.company_name }}</h1>
             </div>
         </div>
         <div class="left-align-button">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Start Month</button>
+            <button type="button" class="btn btn-primary" onclick="payRun('{{ url_for('main.payroll_run') }}')">Add Month</button>
         </div>
-        
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Modal title</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <nav>
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">General Settings</a>
-                            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Pay Items</a>
-                        </div>
-                    </nav>
-                    <div class="tab-content" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                  <div class="row">
-                                    <div class="form-group">
-                                        <form action="{{ url_for('main.employeeForm') }}" method="post" id="editForm">
-                                            {{ form.hidden_tag() }}
-                                            <fieldset class="form-group">
-                                                <div class="form-group">
-                                                    {{ form.first_name.label(class="form-control-label") }}
-                                                    {% if form.first_name.errors %}
-                                                        {{ form.first_name(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.first_name.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.first_name(class="form-control form-control-lg") }}
-                                                    {% endif %}                      
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.last_name.label(class="form-control-label") }}
-                                                    {% if form.last_name.errors %}
-                                                        {{ form.last_name(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.last_name.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.last_name(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.person_nummer.label(class="form-control-label") }}
-                                                    {% if form.person_nummer.errors %}
-                                                        {{ form.person_nummer(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.person_nummer.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.person_nummer(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.skattetabell.label(class="form-control-label") }}
-                                                    {% if form.skattetabell.errors %}
-                                                        {{ form.skattetabell(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.skattetabell.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.skattetabell(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.expat_type.label(class="form-control-label") }}
-                                                    {% if form.expat_type.errors %}
-                                                        {{ form.expat_type(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.expat_type.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.expat_type(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.assign_start.label(class="form-control-label") }}
-                                                    {% if form.assign_start.errors %}
-                                                        {{ form.assign_start(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.assign_start.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.assign_start(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.assign_end.label(class="form-control-label") }}
-                                                    {% if form.assign_end.errors %}
-                                                        {{ form.assign_end(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.assign_end.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.assign_end(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                                <div class="form-check">
-                                                    {{ form.expert(class="form-check-input") }}
-                                                    {{ form.expert.label(class="form-check-label") }}
-                                                </div>
-                                                <div class="form-check">
-                                                    {{ form.sink(class="form-check-input") }}
-                                                    {{ form.sink.label(class="form-check-label") }}
-                                                </div>
-                                                <div class="form-check">
-                                                    {{ form.six_month_rule(class="form-check-input") }}
-                                                    {{ form.six_month_rule.label(class="form-check-label") }}
-                                                </div>
-                                                <div class="form-group">
-                                                    {{ form.social_security.label(class="form-control-label") }}
-                                                    {% if form.social_security.errors %}
-                                                        {{ form.social_security(class="form-control form-control-lg is-invalid") }}    
-                                                        <div class="invalid-feedback">
-                                                            {% for error in form.social_security.errors %}
-                                                                <span>{{ error }} </span>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% else %}
-                                                        {{ form.social_security(class="form-control form-control-lg") }}
-                                                    {% endif %}  
-                                                </div>
-                                            </fieldset> 
-                                            <div class="modal-footer">
-                    
-                                                <div class="form-group">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    {{ form.submit(class="btn btn-primary", id="uform")}}
-                                                </div>
-                                            </div>                                          
-                                        </form>
-                                    </div>
-                                  </div>
-                              
-                        </div>
-                        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                            
-                            <table class="table table-striped table-dark">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Pay Item</th>
-                                        <th scope="col">Tax Setting</th>
-                                        <th scope="col">Cash Type</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Currency</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if pay_items %}
-                                        {% for item in pay_items.items %}
-                                            <tr class="payItemRow" id="{{item.id}}"> 
-                                                <td>{{ item.pay_item }}</td>
-                                                <td>{{ item.tax_setting }}</td>
-                                                <td>{{ item.cash_type }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    {% else %}
-        
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                            <div class="form-group">
-                                <form action="" method="post" id="payitems">
-                                    {{ form.hidden_tag() }}
-                                    <fieldset class="form-group">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Pay item</label>
-                                            <select name="payitemss" form="payitems" id = "payitemss" class="form-control form-control-lg">
-                                                {% if emp_pay_items %}
-                                                    {% for item in emp_pay_items %}
-                                                        <option value= "{{item.id}}">{{ item.pay_item }}</option>
-                                                    {% endfor %}
-                                                {% else %}
-                                                    <option selected disabled hidden>No Pay Items Available</option>
-                                                {% endif %}
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            {{ pay_form.amount.label(class="form-control-label") }}
-                                            {% if pay_form.amount.errors %}
-                                                {{ pay_form.amount(class="form-control form-control-lg is-invalid") }}    
-                                                <div class="invalid-feedback">
-                                                    {% for error in pay_form.amount.errors %}
-                                                        <span>{{ error }} </span>
-                                                    {% endfor %}
-                                                </div>
-                                            {% else %}
-                                                {{ pay_form.amount(class="form-control form-control-lg") }}
-                                            {% endif %}  
-                                        </div>
-                                        <div class="form-group">
-                                            {{ pay_form.currency.label(class="form-control-label") }}
-                                            {% if pay_form.currency.errors %}
-                                                {{ pay_form.currency(class="form-control form-control-lg is-invalid") }}    
-                                                <div class="invalid-feedback">
-                                                    {% for error in pay_form.currency.errors %}
-                                                        <span>{{ error }} </span>
-                                                    {% endfor %}
-                                                </div>
-                                            {% else %}
-                                                {{ pay_form.currency(class="form-control form-control-lg") }}
-                                            {% endif %}  
-                                        </div>
-                                    </fieldset>
-                                    <div class="modal-footer">
-                    
-                                        <div class="form-group">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary" value="Add" type="submit" id="submit">Add</button>
-                                        </div>
-                                    </div> 
-                                </form>
 
-                            </div>          
-                        </div>
-                    </div>
-                </div>
+        <table class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Month</th>
+                    <th scope="col">Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pay_runs %}
+                    <tr> 
+                        <th scope="row">{{ item.id }}</th>
+                        <td>{{ item.month }}</td>
+                        <td>{{ item.year }}</td>
+                        <form action="{{ url_for('main.chosen_company', company_id=item.id) }}">
+                            <td><button type="submit" class="btn btn-primary" >Edit Month</button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-              </div>
-            </div>
-          </div>
-    {% else %}
-
-    {% endif %}
-
+        <div class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="myModal">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
     
-
-
-
+                </div>
+            </div>
+        </div>
 </div>
-<script>
-    $('#uform').click(function(event) {
-        event.preventDefault();
-        var url = "{{ url_for('main.employeeForm') }}"
-        $.post(url, data=$('#editForm').serialize(), function(data) {
-            if (data.status == 'ok') {
-                $('#myModal').modal('hide');
-                location.reload();
-            }
-            else {
-                $('#myModal .modal-content').html(data);
-            }
-        });
-    })
 
-    $('#submit').click(function(event) {
-        event.preventDefault();
-        var url = "{{ url_for('main.emp_pay_item',employee_id=1) }}"
-        $.post(url, data=$('#payitems').serialize(), function(data) {
-            if (data.status == 'ok') {
-            $('#myModal').modal('hide');
-            location.reload();
-            }
-            else {
-            $('#myModal .modal-content').html(data);
-            }
+<script>
+
+function payRun(url){
+        $.get(url, function(data) {
+        $('#myModal .modal-content').html(data);
+        $('#myModal').modal();
         });
-    })
+    }
+
 </script>
+
 
 {% endblock %}
