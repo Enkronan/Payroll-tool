@@ -18,6 +18,14 @@ main = Blueprint('main', __name__)
 def home():
 
     user = User.query.filter_by(id=current_user.get_id()).first()
+    #print(user)
+
+    comp = Company.query.filter_by(id = 1).first()
+    print(comp.payrun)
+
+    emp = Employee.query.filter_by(id = 1).first()
+    print(emp)
+
     
     return render_template("company/home.html",company = user.access)
 
