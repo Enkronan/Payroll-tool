@@ -348,7 +348,7 @@ def add_user_access():
 
 @main.route("/payroll_run", methods=["GET", "POST"])
 @login_required
-def payroll_run():
+def create_payroll_run():
 
     form = PayRunForm()
     if form.validate_on_submit():
@@ -366,3 +366,43 @@ def payroll_run():
         flash('the payroll run has been added! You can now start calculating', 'success')
         return jsonify(status="ok")
     return render_template("modalForms/payRunForm.html", form = form)
+
+@main.route("/calculate_payroll_run/<int:pay_run_id>", methods=["GET", "POST"])
+@login_required
+def calculate_payroll_run(pay_run_id):
+
+    try:
+        pay_run = PayRun.query.filter_by(id=pay_run_id).first()
+        company = pay_run.company
+        #print(company)
+        expats = company.expats
+        #print(expats)
+    except AttributeError:
+        flash('An error occured when attempting to find payrun!', 'danger')
+        return redirect(url_for('main.home'))
+
+    if expats:
+        for employee in expats:
+            #print(employee.pay_items)
+            for employee_pay_item in employee.pay_items:
+                #print(employee_pay_item.payitem)
+                item_to_add = MonthlyPayItem(pay_item = employee_pay_item.payitem.pay_item, 
+                                            tax_setting = employee_pay_item.payitem.tax_setting,
+                                            cash_type = employee_pay_item.payitem.cash_type,
+                                            amount = employee_pay_item.amount,
+                                            currency = employee_pay_item.currency,
+                                            payrun_id = pay_run_id,
+                                            employee_id = employee.id)
+                #print(item_to_add)
+                db.session.add(item_to_add)
+                #db.session.commit()
+                #print(employee.monthly_pay_items)
+
+    expats = Company.query.filter_by(id=company.id).first().expats
+    print(expats)
+                                            
+    #item_to_add = MonthlyPayItem(pay_item="Base Salary", tax_setting="Cash", cash_type="Net", amount = 50000, currency="SEK", payrun_id=3, employee_id=1)
+    #db.session.add(item_to_add)
+    #db.session.commit()
+
+    return render_template("calculations/editPayRun.html", expats = expats)

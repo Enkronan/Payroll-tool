@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
+from datetime import datetime
 from wtforms import StringField, PasswordField, IntegerField, SubmitField, BooleanField, SelectField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
-from app.models import User, Employee, Company, EmployeePayItem
+from app.models import User, Employee, Company, EmployeePayItem, PayRun
+from app.main.routes import session
 
 class AddCompany(FlaskForm):
     company_name = StringField('company name', 
@@ -164,11 +166,26 @@ class AuthorizationForm(FlaskForm):
             raise ValidationError('That email is not used, please check the spelling.')
 
 class PayRunForm(FlaskForm):
-    month = SelectField('Month', choices=[("January","January"),("February","February")], 
-                            validators=[DataRequired()])
-    year = SelectField('Year', choices=[("2018","2018"),("2019","2019")], 
-                            validators=[DataRequired()])
+    month = SelectField('Month', choices=[("January","January"),("February","February"),
+                            ("March", "March"),("April", "April"), ("May","May"), ("June", "June"), ("July", "July"),
+                            ("August", "August"), ("September", "September"),("October","October"), ("November", "November"), ("December", "December")], 
+                            validators=[DataRequired()], default=datetime.now().strftime('%B'))
+    year = SelectField('Year', choices=[("2018","2018"),("2019","2019"), ("2020","2020")], 
+                            validators=[DataRequired()], default=datetime.now().strftime('%Y'))
 
     submit = SubmitField('Add Payroll Run')
 
+    def validate(self):
+        rv = FlaskForm.validate(self)
+        if not rv:
+            return False
 
+        company_id = Company.query.filter_by(company_name = session['current_company']).first().id
+        payrun = PayRun.query.filter_by(month = self.month.data,
+                            year = self.year.data, company_id = company_id).first()
+
+
+        if payrun:
+            self.month.errors.append('You cannot have multiple payroll runs for the same client and period')
+            return False
+        return True

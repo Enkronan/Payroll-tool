@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="left-align-button">
-            <button type="button" class="btn btn-primary" onclick="payRun('{{ url_for('main.payroll_run') }}')">Add Month</button>
+            <button type="button" class="btn btn-primary" onclick="payRun('{{ url_for('main.create_payroll_run') }}')">Add Month</button>
         </div>
 
         <table class="table table-striped table-dark">
@@ -40,7 +40,7 @@
                         <th scope="row">{{ item.id }}</th>
                         <td>{{ item.month }}</td>
                         <td>{{ item.year }}</td>
-                        <form action="{{ url_for('main.chosen_company', company_id=item.id) }}">
+                        <form action="{{ url_for('main.calculate_payroll_run', pay_run_id=item.id) }}">
                             <td><button type="submit" class="btn btn-primary" >Edit Month</button></td>
                         </form>
                     </tr>
