@@ -242,24 +242,6 @@ def onetimetax(expert, yearly_income, netto=0,brutto=0):
 
 
 
-def start_calculation_logic(netto=0,brutto=0):
-    current_employee = Employee.query.get(session['employee'])
-
-    if current_employee.expert == False:
-        expert = 1.00
-    else:
-        expert = 0.75
-
-    if current_employee.sink == True:
-        result_of_calculation = calculate_SINK(expert,netto,brutto)
-        social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
-        result_of_calculation["avgifter"] = social_security_charges["avgifter"]
-    else:
-        result_of_calculation = calculate_tax_table(current_employee.skattetabell,expert,netto,brutto)
-        social_security_charges = socialavgifter(result_of_calculation['skattepliktigt'],current_employee.social_security)
-        result_of_calculation["avgifter"] = social_security_charges["avgifter"]
-
-    return result_of_calculation
 
 
 

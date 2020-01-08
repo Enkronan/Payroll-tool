@@ -7,7 +7,7 @@ from app.models import Company, Employee, PayItem, EmployeePayItem, User, Monthl
 from app.calculations.forms import (AddCompany, AddEmployee, CalculateInitial, EditEmployee, 
                         EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm, PayRunForm)
 from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
-                        onetimetax, social_security_type, previous_period, current_period, start_calculation_logic)
+                        onetimetax, social_security_type, previous_period, current_period)
 
 
 main = Blueprint('main', __name__)
@@ -18,24 +18,14 @@ main = Blueprint('main', __name__)
 def home():
 
     user = User.query.filter_by(id=current_user.get_id()).first()
-    #print(user)
-
-    comp = Company.query.filter_by(id = 1).first()
-    #print(comp.payrun)
-
-    emp = Employee.query.filter_by(id = 1).first()
-    #print(emp)
-
     
     return render_template("company/home.html",company = user.access)
 
 @main.route("/home/<int:company_id>")
 def chosen_company(company_id):
-    company = Company.query.get_or_404(company_id)
 
-    get_company = Company.query.filter_by(id = company.id).first()
-   
-    session['current_company'] = get_company.company_name
+    company = Company.query.get_or_404(company_id)
+    session['current_company'] = company.company_name
 
     return redirect(url_for('main.employee'))
 
@@ -374,35 +364,43 @@ def calculate_payroll_run(pay_run_id):
     try:
         pay_run = PayRun.query.filter_by(id=pay_run_id).first()
         company = pay_run.company
-        #print(company)
         expats = company.expats
-        #print(expats)
     except AttributeError:
         flash('An error occured when attempting to find payrun!', 'danger')
         return redirect(url_for('main.home'))
 
-    if expats:
-        for employee in expats:
-            #print(employee.pay_items)
-            for employee_pay_item in employee.pay_items:
-                #print(employee_pay_item.payitem)
-                item_to_add = MonthlyPayItem(pay_item = employee_pay_item.payitem.pay_item, 
-                                            tax_setting = employee_pay_item.payitem.tax_setting,
-                                            cash_type = employee_pay_item.payitem.cash_type,
-                                            amount = employee_pay_item.amount,
-                                            currency = employee_pay_item.currency,
-                                            payrun_id = pay_run_id,
-                                            employee_id = employee.id)
-                #print(item_to_add)
-                db.session.add(item_to_add)
-                #db.session.commit()
-                #print(employee.monthly_pay_items)
+    #loops over employees and creates monthly pay items from fixed pay items
+    expats_conversion = pay_item_to_monthly_pay_item(expats, pay_run_id, company.id)
 
-    expats = Company.query.filter_by(id=company.id).first().expats
-    print(expats)
-                                            
-    #item_to_add = MonthlyPayItem(pay_item="Base Salary", tax_setting="Cash", cash_type="Net", amount = 50000, currency="SEK", payrun_id=3, employee_id=1)
-    #db.session.add(item_to_add)
-    #db.session.commit()
+    if expats_conversion:
+        #loop over expats and create objects that perform the calculations
+        pass
+    else:
+        #create empty objects to pass into template if there are no expats
+        pass
+    
+        
+
+    
+    
 
     return render_template("calculations/editPayRun.html", expats = expats)
+
+def pay_item_to_monthly_pay_item(expats, pay_run_id, company_id):
+    if expats:
+        for employee in expats:
+            if employee.pay_items:
+                for employee_pay_item in employee.pay_items:
+                    item_to_add = MonthlyPayItem(pay_item = employee_pay_item.payitem.pay_item, 
+                                                tax_setting = employee_pay_item.payitem.tax_setting,
+                                                cash_type = employee_pay_item.payitem.cash_type,
+                                                amount = employee_pay_item.amount,
+                                                currency = employee_pay_item.currency,
+                                                payrun_id = pay_run_id,
+                                                employee_id = employee.id)
+                    db.session.add(item_to_add)
+                    db.session.commit()
+                    expats = Company.query.filter_by(id=company_id).first().expats
+                    return expats
+    return None
+                
