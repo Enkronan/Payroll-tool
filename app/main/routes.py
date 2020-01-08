@@ -6,8 +6,7 @@ from app.helpers import login_required
 from app.models import Company, Employee, PayItem, EmployeePayItem, User, MonthlyPayItem, PayRun
 from app.calculations.forms import (AddCompany, AddEmployee, CalculateInitial, EditEmployee, 
                         EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm, PayRunForm)
-from app.calculations.funktioner import (apportion_expert, apportion_standard, calculate_SINK, calculate_tax_table, socialavgifter,
-                        onetimetax, social_security_type, previous_period, current_period)
+from app.calculations.funktioner import Expat
 
 
 main = Blueprint('main', __name__)
@@ -77,10 +76,11 @@ def editEmployeeForm(employee_id):
     emp_pay_items = employee.pay_items
 
     form = EditEmployee(obj=employee)
+    pay_form = AddEmployeePayItems()
 
     current_company = Company.query.filter_by(company_name = session['current_company']).first()
     company_pay_items = current_company.pay_items
-    pay_form = AddEmployeePayItems()
+    
 
     if form.validate_on_submit():
 
@@ -128,7 +128,6 @@ def add_company():
                              permanent_establishment = form.permanent_establishment.data) 
 
         db.session.add(comp_to_add)
-
         db.session.commit()
 
         added_company = Company.query.filter_by(company_name = form.company_name.data).first()
@@ -181,34 +180,6 @@ def settings():
     return render_template("company/company_settings.html", current_company = current_company, form = edit_form,
              pay_items = pay_items, authorization_form = authorization_form, authorized_users = authorized_users)
 
-
-@main.route("/calculate", methods=["GET", "POST"])
-@login_required
-def calculate():
-
-    form = CalculateInitial()
-
-    if form.validate_on_submit():
-        cash_amount = int(form.cash_amount.data)
-        cash_type = form.cash_type.data
-
-        if cash_type == 'Net':
-            result = start_calculation_logic(cash_amount, 0)
-            return render_template("calculations/result.html", result = result)
-        else:
-            result = start_calculation_logic(0,cash_amount)
-            return render_template("calculations/result.html", result = result)
-
-    try:
-        current_employee = Employee.query.get(session['employee'])
-        current_company = Company.query.filter_by(company_name = session['current_company']).first()
-        social_security = social_security_type(current_employee.social_security)
-    except:
-        flash('You need to pick an employee first!', 'danger')
-        return redirect(url_for('main.employee'))
-
-
-    return render_template("calculations/calculate.html", employee = current_employee, company = current_company, SocialSecurity = social_security, form = form)
 
 @main.route("/company_start", methods=["GET", "POST"])
 @login_required
@@ -379,10 +350,6 @@ def calculate_payroll_run(pay_run_id):
         #create empty objects to pass into template if there are no expats
         pass
     
-        
-
-    
-    
 
     return render_template("calculations/editPayRun.html", expats = expats)
 
@@ -398,8 +365,10 @@ def pay_item_to_monthly_pay_item(expats, pay_run_id, company_id):
                                                 currency = employee_pay_item.currency,
                                                 payrun_id = pay_run_id,
                                                 employee_id = employee.id)
+                    
                     db.session.add(item_to_add)
                     db.session.commit()
+
                     expats = Company.query.filter_by(id=company_id).first().expats
                     return expats
     return None

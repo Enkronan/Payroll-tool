@@ -1,79 +1,42 @@
 import csv
 from datetime import date
 import datetime
-import time
-import random
 import os
 
 from flask import session, current_app
 from app.models import Employee
 
-def previous_period():
-    today = datetime.date.today()
-    first_day_of_month = today.replace(day=1)
-    lastMonth = first_day_of_month - datetime.timedelta(days=1)
+class Expat:
+    def __init__(self, employee_object):
+        self.skattetabell = employee_object.skattetabell
+        self.expert = employee_object.expert
+        self.sink = employee_object.sink
+        self.six_month_rule = employee_object.six_month_rule
+        self.social_security = social_security_type(employee_object.social_security)
+        self.net = 0
+        self.gross = 0
+        self.gross_up = 0
+        self.tax = 0
+        self.social_security_charges = 0
+        self.tax_free = 0
+        self.expert_tax_free = 0
+        
     
-    result = lastMonth.strftime("%Y%m")
-    
-    return result
+    def social_security_type(social_index):
+        all_social_security_descriptions = {}
 
-def current_period():
-    today = datetime.date.today()
-    result = today.strftime("%Y%m")
+        script_dir = os.path.dirname(__file__)
+        rel_path = "skatteverket\\socialavgifter.csv"
+        abs_file_path = os.path.join(script_dir,rel_path)
 
-    return result
+        with open(abs_file_path) as csvfile:
+            tabeller = csv.reader(csvfile, delimiter=";")
 
-
-def apportion_standard(earn_start, earn_end, assignment_start, assignment_end):
-
-    try:
-        earn_start = datetime.datetime.strptime(earn_start, '%Y-%m-%d')
-        earn_end = datetime.datetime.strptime(earn_end, '%Y-%m-%d')
-        assignment_start = datetime.datetime.strptime(assignment_start, '%Y-%m-%d')
-        assignment_end = datetime.datetime.strptime(assignment_end, '%Y-%m-%d')
-    except:
-        return "Not proper formatting"
-
-    ## Calculate how many days the item was earned
-    earning_days = (earn_end - earn_start).days
-
-    # if person was in Sweden when earning started
-    if (earn_start - assignment_start).days > 0:
-        #if person came before earning assignment_start and left after earning assignment_end (i.e. 100% Sweden)
-        if (earn_end - assignment_end).days < 0:
-            procent = 1.00
-        #Person was in sweden when started but left during the period    
-        else:
-            procent = (assignment_end-earn_start).days/earning_days
-
-    #Person came and left during earnings period
-    elif (assignment_start - earn_start).days > 0 and (assignment_end - earn_end).days < 0:
-        procent = (assignment_end-assignment_start).days/earning_days
-    
-    #Person came during earning period and stayed whole period
-    elif (assignment_start-earn_start).days > 0 and (assignment_end-earn_end).days > 0:
-        procent = (earn_end-assignment_start).days / earning_days
-    
-    return {'procent': procent, 'earn_end': earn_end, 'earn_start': earn_start,'assignment_start':assignment_start, 'assignment_end':assignment_end,
-             'earnings days': earning_days}
-
-#print(apportion_standard('2019-01-01','2019-05-01','2018-01-01','2019-04-21'))
-
-def social_security_type(social_index):
-    all_social_security_descriptions = {}
-
-    script_dir = os.path.dirname(__file__)
-    rel_path = "socialavgifter.csv"
-    abs_file_path = os.path.join(script_dir,rel_path)
-
-    with open(abs_file_path) as csvfile:
-        tabeller = csv.reader(csvfile, delimiter=";")
-
-        for row in tabeller:
-            key, value = row[0], row[2]
-            all_social_security_descriptions[key] = value
-    
-    return all_social_security_descriptions[social_index]
+            for row in tabeller:
+                key, value = row[0], row[2]
+                all_social_security_descriptions[key] = value
+        
+        return all_social_security_descriptions[social_index]
 
 #print(social_security_type('1A'))
 
