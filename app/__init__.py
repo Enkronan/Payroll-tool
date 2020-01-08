@@ -5,16 +5,17 @@ from flask_sqlalchemy import SQLAlchemy
 from tempfile import mkdtemp
 from flask_login import LoginManager
 from flask_mail import Mail
-from app.config import Config
+from app.config import Config, DevConfig
 
 #extensions
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
 
-def create_app(config_class=Config):
+def create_app(config_class=DevConfig):
     app = Flask(__name__)
-    app.config.from_object(Config)  
+    app.config.from_object(DevConfig)  
+    app.config["DEBUG"] = True
 
     db.init_app(app)
     login_manager.init_app(app)

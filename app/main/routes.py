@@ -331,7 +331,6 @@ def create_payroll_run():
 @main.route("/calculate_payroll_run/<int:pay_run_id>", methods=["GET", "POST"])
 @login_required
 def calculate_payroll_run(pay_run_id):
-
     try:
         pay_run = PayRun.query.filter_by(id=pay_run_id).first()
         company = pay_run.company
@@ -340,12 +339,15 @@ def calculate_payroll_run(pay_run_id):
         flash('An error occured when attempting to find payrun!', 'danger')
         return redirect(url_for('main.home'))
 
+    #print(expats)
     #loops over employees and creates monthly pay items from fixed pay items
     expats_conversion = pay_item_to_monthly_pay_item(expats, pay_run_id, company.id)
+    #print(expats_conversion)
 
     if expats_conversion:
-        #loop over expats and create objects that perform the calculations
-        pass
+        for employee in expats_conversion:
+            employee_object = Expat(employee)
+            print(employee_object)
     else:
         #create empty objects to pass into template if there are no expats
         pass

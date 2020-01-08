@@ -12,7 +12,7 @@ class Expat:
         self.expert = employee_object.expert
         self.sink = employee_object.sink
         self.six_month_rule = employee_object.six_month_rule
-        self.social_security = social_security_type(employee_object.social_security)
+        self.social_security = employee_object.social_security
         self.net = 0
         self.gross = 0
         self.gross_up = 0
@@ -21,8 +21,7 @@ class Expat:
         self.tax_free = 0
         self.expert_tax_free = 0
         
-    
-    def social_security_type(social_index):
+    def social_security_type(self, social_security_charges):
         all_social_security_descriptions = {}
 
         script_dir = os.path.dirname(__file__)
@@ -36,7 +35,7 @@ class Expat:
                 key, value = row[0], row[2]
                 all_social_security_descriptions[key] = value
         
-        return all_social_security_descriptions[social_index]
+        return all_social_security_descriptions[social_security_charges]
 
 #print(social_security_type('1A'))
 
