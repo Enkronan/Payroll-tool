@@ -13,6 +13,7 @@ class Expat:
         self.sink = employee_object.sink
         self.six_month_rule = employee_object.six_month_rule
         self.social_security = employee_object.social_security
+        self.monthly_pay_items = employee_object.monthly_pay_items
         self.net = 0
         self.gross = 0
         self.gross_up = 0
@@ -20,6 +21,8 @@ class Expat:
         self.social_security_charges = 0
         self.tax_free = 0
         self.expert_tax_free = 0
+        self.sink_rate = 0.25
+        
         
     def social_security_type(self, social_security_charges):
         all_social_security_descriptions = {}
@@ -36,6 +39,44 @@ class Expat:
                 all_social_security_descriptions[key] = value
         
         return all_social_security_descriptions[social_security_charges]
+
+    def evaluate_pay_items(self):
+        for item in self.monthly_pay_items:
+            if item.cash_type == "Gross":
+                self.gross += item.amount
+            elif item.cash_type == "Net":
+                self.net += item.amount
+
+    def calculate_SINK(self):
+        expert = self.expert
+        netto = self.net
+        brutto = self.gross
+        tax_rate_sink = self.sink_rate
+
+        if expert:
+            expert = 0.75
+        else:
+            expert = 1
+
+        if netto > 0 :
+            skatt = (brutto * expert * tax_rate_sink) + (netto/(1-(expert*tax_rate_sink))-netto)
+            gross = (netto/(1-(expert*tax_rate_sink))-netto)
+            brutto = brutto + netto + gross
+            self.tax += skatt
+            self.gross_up += skatt
+            self.expert_tax_free += brutto*(1-expert)
+        else:
+            skatt = brutto * expert * tax_rate_sink
+            self.tax += skatt
+            self.expert_tax_free += brutto*(1-expert)
+            self.net += brutto*expert-skatt + brutto*(1-expert)
+
+    def calculate_pay_items(self):
+        self.calculate_SINK()
+
+    def __str__(self):
+        return "Skattetabell: {}, Expert: {}, SINK: {}, Net: {}, Gross: {}, Tax: {}, Expert Tax Free: {}".format(self.skattetabell, self.expert, self.sink, self.net, self.gross, self.tax, self.expert_tax_free)
+
 
 #print(social_security_type('1A'))
 
@@ -57,33 +98,13 @@ def apportion_expert(expert,normal):
 
     return calculated_expert
 
-def calculate_SINK(expert, netto = 0, brutto = 0):
-    tax_rate_sink = 0.25
 
-    if not 1.00 >= expert >= 0.75:
-        return "expert needs to be a value between 0.75 and 1.00"
-
-    try:     
-        if int(netto) and int(brutto):
-            pass
-    except:
-        return "everything needs to be numbers"
-
-    if netto > 0 :
-        skatt = (brutto * expert * tax_rate_sink) + (netto/(1-(expert*tax_rate_sink))-netto)
-        gross = (netto/(1-(expert*tax_rate_sink))-netto)
-        brutto = brutto + netto + gross
-    else:
-        skatt = brutto * expert * tax_rate_sink
-
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert),
-     'skattesats': skatt/(brutto*expert), 'expert': expert}
     
 
 def calculate_tax_table(tabell, expert, netto = 0, brutto = 0):
     
     script_dir = os.path.dirname(__file__)
-    rel_path = "tabeller.csv"
+    rel_path = "skatteverket\\tabeller.csv"
     abs_file_path = os.path.join(script_dir,rel_path)
 
     if not 1.00 >= expert >= 0.75:
@@ -141,7 +162,7 @@ def socialavgifter(belopp, kod='0'):
     avgifter = 0
 
     script_dir = os.path.dirname(__file__)
-    rel_path = "socialavgifter.csv"
+    rel_path = "skatteverket\\socialavgifter.csv"
     abs_file_path = os.path.join(script_dir,rel_path)
     
     try:

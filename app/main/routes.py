@@ -339,20 +339,26 @@ def calculate_payroll_run(pay_run_id):
         flash('An error occured when attempting to find payrun!', 'danger')
         return redirect(url_for('main.home'))
 
-    #print(expats)
-    #loops over employees and creates monthly pay items from fixed pay items
-    expats_conversion = pay_item_to_monthly_pay_item(expats, pay_run_id, company.id)
-    #print(expats_conversion)
-
-    if expats_conversion:
-        for employee in expats_conversion:
-            employee_object = Expat(employee)
-            print(employee_object)
+    #check that there are expats and at least one has pay items, otherwise create empty lists to pass into template
+    if not company.expats:
+        print("hi")
     else:
-        #create empty objects to pass into template if there are no expats
-        pass
-    
+        expats_conversion = pay_item_to_monthly_pay_item(expats, pay_run_id, company.id)
+        expats = Company.query.filter_by(id=company.id).first().expats
 
+        if expats:
+            for employee in expats:
+                employee_object = Expat(employee)
+                employee_object.evaluate_pay_items()
+                employee_object.calculate_pay_items()
+                print(employee_object)
+        else:
+            #create empty objects to pass into template if there are no expats
+            pass
+    #loops over employees and creates monthly pay items from fixed pay items, new query to get refreshed data
+    
+    #create Expat object which can be used to perform calculations
+    
     return render_template("calculations/editPayRun.html", expats = expats)
 
 def pay_item_to_monthly_pay_item(expats, pay_run_id, company_id):
@@ -370,8 +376,4 @@ def pay_item_to_monthly_pay_item(expats, pay_run_id, company_id):
                     
                     db.session.add(item_to_add)
                     db.session.commit()
-
-                    expats = Company.query.filter_by(id=company_id).first().expats
-                    return expats
-    return None
                 
