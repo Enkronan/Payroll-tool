@@ -53,6 +53,7 @@ class Company(db.Model):
     permanent_establishment = db.Column(db.Boolean, nullable=False)
 
     expats = db.relationship('Employee', backref='company', lazy=True)
+    monthly_employee = db.relationship('MonthlyEmployee', backref='company', lazy=True) 
     pay_items = db.relationship('PayItem', backref='company', lazy=True)
     payroll_runs = db.relationship('PayRun', backref='company', lazy=True)
 
@@ -75,10 +76,10 @@ class Employee(db.Model):
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
     pay_items = db.relationship('EmployeePayItem', backref='employee', lazy=True)
-    monthly_pay_items = db.relationship('MonthlyPayItem', backref='employee', lazy=True)
-    
+    monthly_employee = db.relationship('MonthlyEmployee', backref='employee', lazy=True)
+
     def __repr__(self):
-        return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.pay_items}', '{self.monthly_pay_items}')"      
+        return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.pay_items}')"      
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -123,7 +124,7 @@ class MonthlyPayItem(db.Model):
     currency = db.Column(db.String(60), nullable = False)
 
     payrun_id = db.Column(db.Integer, db.ForeignKey('payrun.id'), nullable=False)
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('monthlyemployee.id'), nullable=False)
 
     def __repr__(self):
         return f"Monthly Pay Item('{self.pay_item}', '{self.tax_setting}', '{self.cash_type}', '{self.amount}', '{self.currency}', '{self.payrun_id}', '{self.employee_id}')" 
@@ -141,4 +142,25 @@ class PayRun(db.Model):
         return f"PayRun('{self.month}', '{self.year}', '{self.company}')" 
 
 
+class MonthlyEmployee(db.Model):
+    __tablename__ = 'monthlyemployee'
 
+    id = db.Column(db.Integer, primary_key = True)
+    first_name = db.Column(db.String(60), nullable = False)
+    last_name = db.Column(db.String(60), nullable = False)
+    person_nummer = db.Column(db.Integer, unique = True)
+    skattetabell = db.Column(db.String(60), nullable = False)
+    expat_type = db.Column(db.String(60), nullable = False)
+    assign_start = db.Column(db.DateTime)
+    assign_end = db.Column(db.DateTime)
+    expert = db.Column(db.Boolean, nullable=False)
+    sink = db.Column(db.Boolean, nullable=False)
+    six_month_rule = db.Column(db.Boolean, nullable=False)
+    social_security = db.Column(db.String(60), nullable = False)
+
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable = False)
+    monthly_pay_items = db.relationship('MonthlyPayItem', backref='monthlyemployee', lazy=True)
+    
+    def __repr__(self):
+        return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.monthly_pay_items}')"      
