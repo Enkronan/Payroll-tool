@@ -14,10 +14,12 @@ class Expat:
         self.six_month_rule = employee_object.six_month_rule
         self.social_security = employee_object.social_security
         self.monthly_pay_items = employee_object.monthly_pay_items
-        self.net = 0
-        self.gross = 0
+        self.net_items = 0
+        self.gross_items = 0
         self.gross_up = 0
         self.tax = 0
+        self.net_result = 0
+        self.total_gross = 0
         self.social_security_charges = 0
         self.tax_free = 0
         self.expert_tax_free = 0
@@ -42,14 +44,14 @@ class Expat:
     def evaluate_pay_items(self):
         for item in self.monthly_pay_items:
             if item.cash_type == "Gross":
-                self.gross += item.amount
+                self.gross_items += item.amount
             elif item.cash_type == "Net":
-                self.net += item.amount
+                self.net_items += item.amount
 
     def calculate_SINK(self):
         expert = self.expert
-        netto = self.net
-        brutto = self.gross
+        netto = self.net_items
+        brutto = self.gross_items
         tax_rate_sink = self.sink_rate
 
         if expert:
@@ -57,24 +59,19 @@ class Expat:
         else:
             expert = 1
 
-        if netto > 0 :
+        if netto > 0:
             skatt = (brutto * expert * tax_rate_sink) + (netto/(1-(expert*tax_rate_sink))-netto)
-            gross = (netto/(1-(expert*tax_rate_sink))-netto)
-            brutto = brutto + netto + gross
             self.tax += skatt
             self.gross_up += skatt
-            self.expert_tax_free += brutto*(1-expert)
         else:
             skatt = brutto * expert * tax_rate_sink
             self.tax += skatt
-            self.expert_tax_free += brutto*(1-expert)
-            self.net += brutto*expert-skatt + brutto*(1-expert)
 
     def calculate_tax_table(self):
     
         expert = self.expert
-        netto = self.net
-        brutto = self.gross
+        netto = self.net_items
+        brutto = self.gross_items
         tabell = self.skattetabell
         
         script_dir = os.path.dirname(__file__)
@@ -96,44 +93,47 @@ class Expat:
                             procent = int(row[5])/100
                             self.tax += (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
                             self.gross_up = (netto/(1-(expert*procent))-netto)
-                            brutto = brutto + netto + gross
                             break
 
                         elif int(row[5]) < 100:
                             if int(row[3]) <= (brutto * expert) + expert*(netto/(1-(expert*(int(row[5])/100)))) <= int(row[4]):
                                 procent = int(row[5])/100
-                                skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                                gross = (netto/(1-(expert*procent))-netto)
-                                brutto = brutto + netto + gross
+                                self.tax += (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
+                                self.gross_up = (netto/(1-(expert*procent))-netto)                                
                                 break
                         else:
                             if int(row[3]) <= (brutto * expert) + expert*(netto/(1-(expert*(float(row[11])/100)))) <= int(row[4]):
                                 procent = float(row[11])/100
-                                skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                                gross = (netto/(1-(expert*procent))-netto)
-                                brutto = brutto + netto + gross
+                                self.tax = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
+                                self.gross_up = (netto/(1-(expert*procent))-netto)                                
                                 break
 
                     else:
                         if int(row[3]) <= (brutto*expert) <= int(row[4]):
                             skatt = int(row[5])
                             if skatt < 100:
-                                skatt = int(brutto*expert) * (skatt/100)
+                                skatt = brutto*expert*(skatt/100)
+                            self.tax += skatt
                             break
         
-        return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert)}
+        return 1
     
-    
-    
+    def calculate_result(self):
+        self.total_gross = self.gross_items + self.gross_up
+        self.net_result = self.gross_items + self.gross_up + self.net_items - self.tax
+        self.expert_tax_free = self.total_gross * 0.25 if self.expert else 0 
+
     def calculate_pay_items(self):
         self.evaluate_pay_items()
-        self.calculate_SINK()
-
+        if self.sink:
+            self.calculate_SINK()
+        else:
+            self.calculate_tax_table()
+        self.calculate_result()
+        
     def __str__(self):
-        return "Skattetabell: {}, Expert: {}, SINK: {}, Net: {}, Gross: {}, Tax: {}, Expert Tax Free: {}".format(self.skattetabell, self.expert, self.sink, self.net, self.gross, self.tax, self.expert_tax_free)
+        return "Skattetabell: {}, Expert: {}, SINK: {}, Net: {}, Total gross: {}, Tax: {}, Expert Tax Free: {}".format(self.skattetabell, self.expert, self.sink, self.net_result, self.total_gross, self.tax, self.expert_tax_free)
 
-
-#print(social_security_type('1A'))
 
 def apportion_expert(expert,normal):
     
