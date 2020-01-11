@@ -3,7 +3,7 @@ from app.users.routes import current_user
 
 from app import db
 from app.helpers import login_required
-from app.models import Company, Employee, PayItem, EmployeePayItem, User, MonthlyPayItem, PayRun
+from app.models import Company, Employee, PayItem, EmployeePayItem, User, MonthlyPayItem, PayRun, MonthlyEmployee
 from app.calculations.forms import (AddCompany, AddEmployee, CalculateInitial, EditEmployee, 
                         EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm, PayRunForm)
 from app.calculations.funktioner import Expat
@@ -339,17 +339,21 @@ def calculate_payroll_run(pay_run_id):
         flash('An error occured when attempting to find payrun!', 'danger')
         return redirect(url_for('main.home'))
 
+    #If calculations already been run, just pass values into the template
+    if pay_run.monthly_expats:
+        return render_template("calculations/editPayRun.html", expats = pay_run.monthly_expats)
+    
     #check that there are expats and at least one has pay items, otherwise create empty lists to pass into template
     if not company.expats:
-        print("hi")
+        expats = []
     else:
-        expats_conversion = pay_item_to_monthly_pay_item(expats, pay_run_id, company.id)
-        expats = Company.query.filter_by(id=company.id).first().expats
-
+        expats_conversion = create_monthly_expats(expats, pay_run_id, company.id)
+        pay_run = PayRun.query.filter_by(id=pay_run_id).first()
+        expats = pay_run.monthly_expats
+        
         if expats:
             for employee in expats:
                 employee_object = Expat(employee)
-                employee_object.evaluate_pay_items()
                 employee_object.calculate_pay_items()
                 print(employee_object)
         else:
@@ -361,9 +365,24 @@ def calculate_payroll_run(pay_run_id):
     
     return render_template("calculations/editPayRun.html", expats = expats)
 
-def pay_item_to_monthly_pay_item(expats, pay_run_id, company_id):
+def create_monthly_expats(expats, pay_run_id, company_id):
     if expats:
         for employee in expats:
+            monthly_expat_to_add = MonthlyEmployee(first_name = employee.first_name,
+                                                    last_name = employee.last_name,
+                                                    person_nummer = employee.person_nummer,
+                                                    skattetabell = employee.skattetabell,
+                                                    expat_type = employee.expat_type,
+                                                    assign_start = employee.assign_start,
+                                                    assign_end = employee.assign_end,
+                                                    expert = employee.expert,
+                                                    sink = employee.sink,
+                                                    six_month_rule = employee.six_month_rule,
+                                                    social_security = employee.social_security,
+                                                    company_id = company_id,
+                                                    employee_id = employee.id,
+                                                    payrun_id = pay_run_id)
+            
             if employee.pay_items:
                 for employee_pay_item in employee.pay_items:
                     item_to_add = MonthlyPayItem(pay_item = employee_pay_item.payitem.pay_item, 
@@ -374,6 +393,8 @@ def pay_item_to_monthly_pay_item(expats, pay_run_id, company_id):
                                                 payrun_id = pay_run_id,
                                                 employee_id = employee.id)
                     
-                    db.session.add(item_to_add)
-                    db.session.commit()
+                    monthly_expat_to_add.monthly_pay_items.append(item_to_add)
+
+            db.session.add(monthly_expat_to_add)
+            db.session.commit()
                 

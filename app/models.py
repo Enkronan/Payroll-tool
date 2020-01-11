@@ -136,6 +136,7 @@ class PayRun(db.Model):
     year = db.Column(db.String(60), nullable = False)
 
     monthly_pay_items = db.relationship('MonthlyPayItem', backref='payrun', lazy=True)
+    monthly_expats = db.relationship('MonthlyEmployee', backref='payrun', lazy=True)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
 
     def __repr__(self):
@@ -148,7 +149,7 @@ class MonthlyEmployee(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     first_name = db.Column(db.String(60), nullable = False)
     last_name = db.Column(db.String(60), nullable = False)
-    person_nummer = db.Column(db.Integer, unique = True)
+    person_nummer = db.Column(db.Integer)
     skattetabell = db.Column(db.String(60), nullable = False)
     expat_type = db.Column(db.String(60), nullable = False)
     assign_start = db.Column(db.DateTime)
@@ -160,7 +161,21 @@ class MonthlyEmployee(db.Model):
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable = False)
+    payrun_id = db.Column(db.Integer, db.ForeignKey('payrun.id'), nullable = False)
     monthly_pay_items = db.relationship('MonthlyPayItem', backref='monthlyemployee', lazy=True)
+    monthly_result = db.relationship('MonthResult', backref='monthlyemployee', lazy=True)
     
     def __repr__(self):
-        return f"Employee('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.monthly_pay_items}')"      
+        return f"Monthly Expat('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.monthly_pay_items}')"      
+
+class MonthResult(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    net = db.Column(db.Integer)
+    gross = db.Column(db.Integer)
+    gross_up = db.Column(db.Integer)
+    tax = db.Column(db.Integer)
+    tax_free = db.Column(db.Integer)
+    expert_tax_free = db.Column(db.Integer)
+    social_security_charges = db.Column(db.Integer)
+
+    monthly_employee_id = db.Column(db.Integer, db.ForeignKey('monthlyemployee.id'), nullable = False)

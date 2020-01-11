@@ -126,6 +126,7 @@ class Expat:
     
     
     def calculate_pay_items(self):
+        self.evaluate_pay_items()
         self.calculate_SINK()
 
     def __str__(self):
