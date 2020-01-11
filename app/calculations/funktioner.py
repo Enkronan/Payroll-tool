@@ -23,6 +23,9 @@ class Expat:
         self.social_security_charges = 0
         self.tax_free = 0
         self.expert_tax_free = 0
+
+        self.monthly_employee_id = employee_object.id
+
         self.sink_rate = 0.25
         
     def social_security_type(self):

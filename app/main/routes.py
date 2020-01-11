@@ -3,7 +3,7 @@ from app.users.routes import current_user
 
 from app import db
 from app.helpers import login_required
-from app.models import Company, Employee, PayItem, EmployeePayItem, User, MonthlyPayItem, PayRun, MonthlyEmployee
+from app.models import Company, Employee, PayItem, EmployeePayItem, User, MonthlyPayItem, PayRun, MonthlyEmployee, MonthResult
 from app.calculations.forms import (AddCompany, AddEmployee, CalculateInitial, EditEmployee, 
                         EditCompany, PayItems, AddEmployeePayItems, AuthorizationForm, PayRunForm)
 from app.calculations.funktioner import Expat
@@ -296,7 +296,6 @@ def add_user_access():
     if authorization_form.validate_on_submit():
 
         user_to_add = User.query.filter_by(email = authorization_form.email.data).first()
-
         user_to_add.access.append(current_company)
         db.session.commit()
 
@@ -344,26 +343,39 @@ def calculate_payroll_run(pay_run_id):
         return render_template("calculations/editPayRun.html", expats = pay_run.monthly_expats)
     
     #check that there are expats and at least one has pay items, otherwise create empty lists to pass into template
-    if not company.expats:
-        expats = []
-    else:
-        expats_conversion = create_monthly_expats(expats, pay_run_id, company.id)
-        pay_run = PayRun.query.filter_by(id=pay_run_id).first()
-        expats = pay_run.monthly_expats
+
+    expats_conversion = create_monthly_expats(expats, pay_run_id, company.id)
+    pay_run = PayRun.query.filter_by(id=pay_run_id).first()
+    expats = pay_run.monthly_expats
         
-        if expats:
-            for employee in expats:
-                employee_object = Expat(employee)
-                employee_object.calculate_pay_items()
-                print(employee_object)
-        else:
-            #create empty objects to pass into template if there are no expats
-            pass
-    #loops over employees and creates monthly pay items from fixed pay items, new query to get refreshed data
+    if expats:
+        for employee in expats:
+            employee_object = Expat(employee)
+            employee_object.calculate_pay_items()
+            add_result_to_database(employee_object)
+
+    pay_run = PayRun.query.filter_by(id=pay_run_id).first()
+    expats = pay_run.monthly_expats
+    print(expats)
     
-    #create Expat object which can be used to perform calculations
-    
-    return render_template("calculations/editPayRun.html", expats = expats)
+    return render_template("calculations/editPayRun.html", expats = expats, company = company, pay_run = pay_run)
+
+
+def add_result_to_database(employee_object):
+    item_to_add = MonthResult(net_items = employee_object.net_items,
+                                gross_items = employee_object.gross_items,
+                                net_result = employee_object.net_result,
+                                total_gross = employee_object.total_gross,
+                                gross_up = employee_object.gross_up,
+                                tax = employee_object.tax,
+                                tax_free = employee_object.tax_free,
+                                expert_tax_free = employee_object.expert_tax_free,
+                                social_security_charges = employee_object.social_security_charges,
+                                monthly_employee_id = employee_object.monthly_employee_id)
+
+    db.session.add(item_to_add)
+    db.session.commit()
+
 
 def create_monthly_expats(expats, pay_run_id, company_id):
     if expats:

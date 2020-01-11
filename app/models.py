@@ -163,15 +163,17 @@ class MonthlyEmployee(db.Model):
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable = False)
     payrun_id = db.Column(db.Integer, db.ForeignKey('payrun.id'), nullable = False)
     monthly_pay_items = db.relationship('MonthlyPayItem', backref='monthlyemployee', lazy=True)
-    monthly_result = db.relationship('MonthResult', backref='monthlyemployee', lazy=True)
+    monthly_result = db.relationship('MonthResult', backref='monthlyemployee', lazy=False)
     
     def __repr__(self):
-        return f"Monthly Expat('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.monthly_pay_items}')"      
+        return f"Monthly Expat('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.monthly_pay_items}', '{self.monthly_result}')"      
 
 class MonthResult(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    net = db.Column(db.Integer)
-    gross = db.Column(db.Integer)
+    net_items = db.Column(db.Integer)
+    gross_items = db.Column(db.Integer)
+    net_result = db.Column(db.Integer)
+    total_gross = db.Column(db.Integer)
     gross_up = db.Column(db.Integer)
     tax = db.Column(db.Integer)
     tax_free = db.Column(db.Integer)
@@ -179,3 +181,6 @@ class MonthResult(db.Model):
     social_security_charges = db.Column(db.Integer)
 
     monthly_employee_id = db.Column(db.Integer, db.ForeignKey('monthlyemployee.id'), nullable = False)
+
+    def __repr__(self):
+        return f"Monthly Result('{self.net_items}')"
