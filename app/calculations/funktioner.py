@@ -23,7 +23,6 @@ class Expat:
         self.expert_tax_free = 0
         self.sink_rate = 0.25
         
-        
     def social_security_type(self):
         all_social_security_descriptions = {}
 
@@ -87,9 +86,6 @@ class Expat:
         else:
             expert = 1
 
-        if netto < 1 and brutto < 1:
-                return {'skatt': 0, 'brutto': 0, 'skattepliktigt': 0, 'skattefri': 0, 'skattesats': 0}
-
         with open(abs_file_path) as csvfile:
             tabeller = csv.reader(csvfile, delimiter=";")
 
@@ -98,8 +94,8 @@ class Expat:
                     if netto > 0: 
                         if row[4] == '':
                             procent = int(row[5])/100
-                            skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                            gross = (netto/(1-(expert*procent))-netto)
+                            self.tax += (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
+                            self.gross_up = (netto/(1-(expert*procent))-netto)
                             brutto = brutto + netto + gross
                             break
 
@@ -155,64 +151,6 @@ def apportion_expert(expert,normal):
     calculated_expert = standard_rate - expert_taxfree * apportion
 
     return calculated_expert
-
-
-
-def calculate_tax_table(tabell):
-    
-    script_dir = os.path.dirname(__file__)
-    rel_path = "skatteverket\\tabeller.csv"
-    abs_file_path = os.path.join(script_dir,rel_path)
-
-    if not 1.00 >= expert >= 0.75:
-        return "expert needs to be a value between 0.75 and 1.00"
-
-    try:     
-        if int(tabell) and int(netto) and int(brutto):
-            pass
-    except:
-        return "everything needs to be numbers"
-
-    if netto < 1 and brutto < 1:
-            return {'skatt': 0, 'brutto': 0, 'skattepliktigt': 0, 'skattefri': 0, 'skattesats': 0}
-
-    with open(abs_file_path) as csvfile:
-        tabeller = csv.reader(csvfile, delimiter=";")
-
-        for row in tabeller:
-            if row[2] == tabell:
-                if netto > 0: 
-                    if row[4] == '':
-                        procent = int(row[5])/100
-                        skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                        gross = (netto/(1-(expert*procent))-netto)
-                        brutto = brutto + netto + gross
-                        break
-
-                    elif int(row[5]) < 100:
-                        if int(row[3]) <= (brutto * expert) + expert*(netto/(1-(expert*(int(row[5])/100)))) <= int(row[4]):
-                            procent = int(row[5])/100
-                            skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                            gross = (netto/(1-(expert*procent))-netto)
-                            brutto = brutto + netto + gross
-                            break
-                    else:
-                        if int(row[3]) <= (brutto * expert) + expert*(netto/(1-(expert*(float(row[11])/100)))) <= int(row[4]):
-                            procent = float(row[11])/100
-                            skatt = (brutto * expert * procent) + (netto/(1-(expert*procent))-netto)
-                            gross = (netto/(1-(expert*procent))-netto)
-                            brutto = brutto + netto + gross
-                            break
-
-                else:
-                    if int(row[3]) <= (brutto*expert) <= int(row[4]):
-                        skatt = int(row[5])
-                        if skatt < 100:
-                            skatt = int(brutto*expert) * (skatt/100)
-                        break
-    
-    return {'skatt': skatt, 'brutto': brutto, 'skattepliktigt': brutto*expert, 'skattefri': brutto*(1-expert), 'skattesats': skatt/(brutto*expert)}
-
 
 def socialavgifter(belopp, kod='0'):
 
