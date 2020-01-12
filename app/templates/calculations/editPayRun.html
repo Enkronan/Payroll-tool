@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block main %}
+<ul class= "nav" id="second_navbar">
 
+    <h4 class="nav_heading active-nav"><a id="nav-start" >Start</a></h4>
+    <h4 class="nav_heading"><a id="nav-settings" href="{{ url_for('main.settings') }}">Settings</a></h4>
+    <h4 class="nav_heading"><a id="nav-employees" href="{{ url_for('main.employee') }}">Employees</a></h4>
+
+</ul>
 <div class="container p-5 own-cont">
     <div class="titlebar-container">
         <div class="titlebar">
@@ -51,8 +57,9 @@
                         <td>0</td>
                     {% endif %}
                     <form action="{{ url_for('main.chosen_company', company_id=item.id) }}">
-                        <td><button type="submit" class="btn btn-primary" >Edit Company</button></td>
+                        <td><button type="submit" class="btn btn-primary" >Edit Employee</button></td>
                     </form>
+                
                 </tr>
             {% endfor %}
         </tbody>

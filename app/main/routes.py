@@ -360,6 +360,20 @@ def calculate_payroll_run(pay_run_id):
     return render_template("calculations/editPayRun.html", expats = expats, company = company, pay_run = pay_run)
 
 
+@main.route("/delete_pay_run/<int:pay_run_id>", methods=["GET", "POST"])
+@login_required
+def delete_pay_run(pay_run_id):
+    if request.method == 'POST':
+        chosen_item = PayRun.query.get_or_404(pay_run_id)
+        for item in chosen_item.
+        db.session.delete(chosen_item)
+        db.session.commit()
+
+        return jsonify(status="ok")
+    else:
+        return render_template("modalForms/deletePayRun.html",pay_run_id = pay_run_id)
+
+
 def add_result_to_database(employee_object):
     item_to_add = MonthResult(net_items = employee_object.net_items,
                                 gross_items = employee_object.gross_items,

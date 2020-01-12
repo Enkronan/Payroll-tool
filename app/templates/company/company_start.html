@@ -16,7 +16,7 @@
         <h4 class="nav_heading disabled-nav"><a>Employees</a></h4>
     {% endif %}
 </ul>
-<div class="container p-5 own-cont">
+<div class="container p-5">
         <div class="titlebar-container">
             <div class="titlebar">
                 <h1 class="title">{{ current_company.company_name }}</h1>
@@ -29,19 +29,21 @@
         <table class="table table-striped table-dark">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
                     <th scope="col">Month</th>
                     <th scope="col">Year</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in pay_runs %}
-                    <tr> 
-                        <th scope="row">{{ item.id }}</th>
+                    <tr class="payItemRow" id="{{item.id}}"> 
                         <td>{{ item.month }}</td>
                         <td>{{ item.year }}</td>
                         <form action="{{ url_for('main.calculate_payroll_run', pay_run_id=item.id) }}">
-                            <td><button type="submit" class="btn btn-primary" >Edit Month</button></td>
+                            <td>
+                                <button type="submit" class="btn btn-primary" >Edit Month</button>
+                                <button type="button" class="btn btn-danger btn-sm m-1" onclick="delPayRun('{{ url_for('main.delete_pay_run',pay_run_id = item.id) }}')">Delete</button>
+                            </td>
                         </form>
                     </tr>
                 {% endfor %}
@@ -55,6 +57,14 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+
+                </div>
+            </div>
+        </div>
 </div>
 
 <script>
@@ -65,6 +75,33 @@ function payRun(url){
         $('#myModal').modal();
         });
     }
+
+function delPayRun(url){
+    $.get(url, function(data) {
+    $('#deleteModal .modal-content').html(data);
+    $('#deleteModal').modal();
+    });
+}
+
+function deletePayRun(url, pay_id){
+    $.post(url, function(data) {
+        if (data.status == 'ok') {
+        $('#deleteModal').modal('hide');
+        animateDel(pay_id);
+        }
+        else {
+        $('#deleteModal .modal-content').html(data);
+        }
+    });
+}
+
+function animateDel(pay_id){
+    var element = document.getElementById(pay_id)
+    element.style.animationPlayState = 'running';
+    element.addEventListener('animationend', () =>  {
+                  element.remove();
+              });
+}
 
 </script>
 

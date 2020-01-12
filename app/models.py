@@ -135,8 +135,8 @@ class PayRun(db.Model):
     month = db.Column(db.String(60), nullable = False)
     year = db.Column(db.String(60), nullable = False)
 
-    monthly_pay_items = db.relationship('MonthlyPayItem', backref='payrun', lazy=True)
-    monthly_expats = db.relationship('MonthlyEmployee', backref='payrun', lazy=True)
+    monthly_pay_items = db.relationship('MonthlyPayItem', backref='payrun', lazy=True, cascade= "all, delete, delete-orphan")
+    monthly_expats = db.relationship('MonthlyEmployee', backref='payrun', lazy=True, cascade= "all, delete, delete-orphan")
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
 
     def __repr__(self):
@@ -163,7 +163,7 @@ class MonthlyEmployee(db.Model):
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable = False)
     payrun_id = db.Column(db.Integer, db.ForeignKey('payrun.id'), nullable = False)
     monthly_pay_items = db.relationship('MonthlyPayItem', backref='monthlyemployee', lazy=True)
-    monthly_result = db.relationship('MonthResult', backref='monthlyemployee', lazy=False)
+    monthly_result = db.relationship('MonthResult', backref='monthlyemployee', lazy=False, cascade= "all, delete, delete-orphan")
     
     def __repr__(self):
         return f"Monthly Expat('{self.first_name}', '{self.last_name}','{self.person_nummer}','{self.expat_type}', '{self.assign_start}', '{self.assign_end}', '{self.expert}', '{self.sink}', '{self.six_month_rule}', '{self.social_security}', '{self.monthly_pay_items}', '{self.monthly_result}')"      
