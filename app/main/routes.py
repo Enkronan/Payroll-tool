@@ -73,6 +73,7 @@ def employeeForm():
 @login_required
 def editEmployeeForm(employee_id):
     employee = Employee.query.get_or_404(employee_id)
+    session["current_employee"] = employee_id
     emp_pay_items = employee.pay_items
 
     form = EditEmployee(obj=employee)
@@ -365,7 +366,6 @@ def calculate_payroll_run(pay_run_id):
 def delete_pay_run(pay_run_id):
     if request.method == 'POST':
         chosen_item = PayRun.query.get_or_404(pay_run_id)
-        for item in chosen_item.
         db.session.delete(chosen_item)
         db.session.commit()
 

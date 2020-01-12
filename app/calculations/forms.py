@@ -123,6 +123,16 @@ class EditEmployee(FlaskForm):
 
     submit = SubmitField('Edit Employee')
 
+    def validate_person_nummer(self, person_nummer):
+        employee_id = session["current_employee"]
+        employee = Employee.query.get_or_404(employee_id)
+
+        if person_nummer.data != employee.person_nummer:
+            check_employee = Employee.query.filter_by(person_nummer=person_nummer.data).first()
+            
+            if check_employee:
+                raise ValidationError('That personnummer is used, please check again.')
+
 class CalculateInitial(FlaskForm):
     cash_amount = IntegerField('Cash Amount', validators=[Optional()], default = 0)
 

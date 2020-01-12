@@ -12,12 +12,7 @@ access = db.Table('access',
     db.Column('company_id', db.Integer, db.ForeignKey('company.id', primary_key=True)),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id', primary_key=True)),
 )
-'''
-month_to_company = db.Table('month_to_company',
-    db.Column('company_id', db.Integer, db.ForeignKey('company.id', primary_key=True)),
-    db.Column('payrun_id', db.Integer, db.ForeignKey('payrun.id', primary_key=True)),
-)
-'''
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(30), unique = True, nullable = False)
@@ -75,7 +70,7 @@ class Employee(db.Model):
     social_security = db.Column(db.String(60), nullable = False)
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable = False)
-    pay_items = db.relationship('EmployeePayItem', backref='employee', lazy=True)
+    pay_items = db.relationship('EmployeePayItem', backref='employee', lazy=True, cascade= "all, delete, delete-orphan")
     monthly_employee = db.relationship('MonthlyEmployee', backref='employee', lazy=True)
 
     def __repr__(self):
