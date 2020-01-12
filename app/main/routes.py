@@ -340,7 +340,7 @@ def calculate_payroll_run(pay_run_id):
 
     #If calculations already been run, just pass values into the template
     if pay_run.monthly_expats:
-        return render_template("calculations/editPayRun.html", expats = pay_run.monthly_expats)
+        return render_template("calculations/editPayRun.html", expats = pay_run.monthly_expats, company = company, pay_run = pay_run)
     
     #check that there are expats and at least one has pay items, otherwise create empty lists to pass into template
 
@@ -356,7 +356,6 @@ def calculate_payroll_run(pay_run_id):
 
     pay_run = PayRun.query.filter_by(id=pay_run_id).first()
     expats = pay_run.monthly_expats
-    print(expats)
     
     return render_template("calculations/editPayRun.html", expats = expats, company = company, pay_run = pay_run)
 
