@@ -183,4 +183,4 @@ class MonthResult(db.Model):
     monthly_employee_id = db.Column(db.Integer, db.ForeignKey('monthlyemployee.id'), nullable = False)
 
     def __repr__(self):
-        return f"Monthly Result('{self.net_items}')"
+        return f"Monthly Result('{self.net_items}', '{self.gross_items}', '{self.net_result}', '{self.total_gross}', '{self.gross_items}', '{self.tax}', '{self.tax_free}', , '{self.expert_tax_free}', , '{self.social_security_charges}')"
