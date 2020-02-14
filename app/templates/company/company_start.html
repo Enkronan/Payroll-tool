@@ -1,107 +1,111 @@
 {% extends "layout_no_container.html" %}
 
 {% block title %}
-    Log In
+Log In
 {% endblock %}
 
 {% block main %}
-<ul class= "nav" id="second_navbar">
+<ul class="nav" id="second_navbar">
     {% if current_company %}
-        <h4 class="nav_heading active-nav"><a id="nav-start" >Start</a></h4>
-        <h4 class="nav_heading"><a id="nav-settings" href="{{ url_for('main.settings') }}">Settings</a></h4>
-        <h4 class="nav_heading"><a id="nav-employees" href="{{ url_for('main.employee') }}">Employees</a></h4>
+    <h4 class="nav_heading active-nav"><a id="nav-start">Start</a></h4>
+    <h4 class="nav_heading"><a id="nav-settings" href="{{ url_for('main.settings') }}">Settings</a></h4>
+    <h4 class="nav_heading"><a id="nav-employees" href="{{ url_for('main.employee') }}">Employees</a></h4>
     {% else %}
-        <h4 class="nav_heading active-nav"><a >Start</a></h4>
-        <h4 class="nav_heading disabled-nav"><a>Settings</a></h4>
-        <h4 class="nav_heading disabled-nav"><a>Employees</a></h4>
+    <h4 class="nav_heading active-nav"><a>Start</a></h4>
+    <h4 class="nav_heading disabled-nav"><a>Settings</a></h4>
+    <h4 class="nav_heading disabled-nav"><a>Employees</a></h4>
     {% endif %}
 </ul>
 <div class="container p-5">
-        <div class="titlebar-container">
-            <div class="titlebar">
-                <h1 class="title">{{ current_company.company_name }}</h1>
+    <div class="titlebar-container">
+        <div class="titlebar">
+            <h1 class="title">{{ current_company.company_name }}</h1>
+        </div>
+    </div>
+    <div class="left-align-button">
+        <button type="button" class="btn btn-primary" onclick="payRun('{{ url_for('main.create_payroll_run') }}')">Add
+            Month</button>
+    </div>
+
+    <table class="table table-striped table-dark">
+        <thead>
+            <tr>
+                <th scope="col">Month</th>
+                <th scope="col">Year</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in pay_runs %}
+            <tr class="payItemRow" id="{{item.id}}">
+                <td>{{ item.month }}</td>
+                <td>{{ item.year }}</td>
+                <form action="{{ url_for('main.calculate_payroll_run', pay_run_id=item.id) }}">
+                    <td>
+                        <button type="submit" class="btn btn-primary">Edit Month</button>
+                        <button type="button" class="btn btn-danger btn-sm m-1"
+                            onclick="delPayRun('{{ url_for('main.delete_pay_run',pay_run_id = item.id) }}')">Delete</button>
+                    </td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="myModal">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+
             </div>
         </div>
-        <div class="left-align-button">
-            <button type="button" class="btn btn-primary" onclick="payRun('{{ url_for('main.create_payroll_run') }}')">Add Month</button>
-        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
 
-        <table class="table table-striped table-dark">
-            <thead>
-                <tr>
-                    <th scope="col">Month</th>
-                    <th scope="col">Year</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in pay_runs %}
-                    <tr class="payItemRow" id="{{item.id}}"> 
-                        <td>{{ item.month }}</td>
-                        <td>{{ item.year }}</td>
-                        <form action="{{ url_for('main.calculate_payroll_run', pay_run_id=item.id) }}">
-                            <td>
-                                <button type="submit" class="btn btn-primary" >Edit Month</button>
-                                <button type="button" class="btn btn-danger btn-sm m-1" onclick="delPayRun('{{ url_for('main.delete_pay_run',pay_run_id = item.id) }}')">Delete</button>
-                            </td>
-                        </form>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
 
-        <div class="modal fade bd-example-modal-xl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="myModal">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-    
-                </div>
             </div>
         </div>
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-
-
-                </div>
-            </div>
-        </div>
+    </div>
 </div>
 
 <script>
 
-function payRun(url){
-        $.get(url, function(data) {
-        $('#myModal .modal-content').html(data);
-        $('#myModal').modal();
+    function payRun(url) {
+        $.get(url, function (data) {
+            $('#myModal .modal-content').html(data);
+            $('#myModal').modal();
         });
     }
 
-function delPayRun(url){
-    $.get(url, function(data) {
-    $('#deleteModal .modal-content').html(data);
-    $('#deleteModal').modal();
-    });
-}
+    function delPayRun(url) {
+        $.get(url, function (data) {
+            $('#deleteModal .modal-content').html(data);
+            $('#deleteModal').modal();
+        });
+    }
 
-function deletePayRun(url, pay_id){
-    $.post(url, function(data) {
-        if (data.status == 'ok') {
-        $('#deleteModal').modal('hide');
-        animateDel(pay_id);
-        }
-        else {
-        $('#deleteModal .modal-content').html(data);
-        }
-    });
-}
+    function deletePayRun(url, pay_id) {
+        $.post(url, function (data) {
+            if (data.status == 'ok') {
+                $('#deleteModal').modal('hide');
+                animateDel(pay_id);
+            }
+            else {
+                $('#deleteModal .modal-content').html(data);
+            }
+        });
+    }
 
-function animateDel(pay_id){
-    var element = document.getElementById(pay_id)
-    element.style.animationPlayState = 'running';
-    element.addEventListener('animationend', () =>  {
-                  element.remove();
-              });
-}
+    function animateDel(pay_id) {
+        var element = document.getElementById(pay_id)
+        element.style.animationPlayState = 'running';
+        element.addEventListener('animationend', () => {
+            element.remove();
+        });
+    }
 
 </script>
 

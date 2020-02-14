@@ -1,13 +1,11 @@
-
 <div class="modal-header">
     <h5 class="modal-title" id="deleteModalLabel">Delete Payrun?</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
+        <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-danger" value="Delete" onclick="deletePayRun('{{ url_for('main.delete_pay_run', pay_run_id = pay_run_id) }}', {{pay_run_id}})">Delete</button>
+    <button type="button" class="btn btn-danger" value="Delete"
+        onclick="deletePayRun('{{ url_for('main.delete_pay_run', pay_run_id = pay_run_id) }}', {{pay_run_id}})">Delete</button>
 </div>
-
-

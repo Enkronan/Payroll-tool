@@ -1,13 +1,13 @@
 {% extends "layout_no_container.html" %}
 
 {% block title %}
-    Log In
+Log In
 {% endblock %}
 
 {% block main %}
-<ul class= "nav" id="second_navbar">
+<ul class="nav" id="second_navbar">
 
-    <h4 class="nav_heading active-nav"><a id="nav-start" >Start</a></h4>
+    <h4 class="nav_heading active-nav"><a id="nav-start">Start</a></h4>
     <h4 class="nav_heading"><a id="nav-settings" href="{{ url_for('main.settings') }}">Settings</a></h4>
     <h4 class="nav_heading"><a id="nav-employees" href="{{ url_for('main.employee') }}">Employees</a></h4>
 
@@ -38,28 +38,28 @@
         </thead>
         <tbody>
             {% for item in expats %}
-                <tr> 
-                    <th scope="row">{{ item.id }}</th>
-                    <td>{{ item.first_name }} {{ item.last_name }}</td>
-                    <td>{{ item.person_nummer }}</td>
-                    <td>{{ item.expat_type }}</td>
-                    {% if item.monthly_result %}
-                        {% for result in item.monthly_result %}
-                            <td>{{ result.total_gross }}</td>
-                            <td>{{ result.gross_up }}</td>
-                            <td>{{ result.tax }}</td>
-                            <td>{{ result.net_result }}</td>
-                        {% endfor %}
-                    {% else %}
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    {% endif %}
-                    <form action="{{ url_for('main.chosen_company', company_id=item.id) }}">
-                        <td><button type="submit" class="btn btn-primary" >Edit Employee</button></td>
-                    </form> 
-                </tr>
+            <tr>
+                <th scope="row">{{ item.id }}</th>
+                <td>{{ item.first_name }} {{ item.last_name }}</td>
+                <td>{{ item.person_nummer }}</td>
+                <td>{{ item.expat_type }}</td>
+                {% if item.monthly_result %}
+                    {% for result in item.monthly_result %}
+                        <td>{{ result.total_gross }}</td>
+                        <td>{{ result.gross_up }}</td>
+                        <td>{{ result.tax }}</td>
+                        <td>{{ result.net_result }}</td>
+                    {% endfor %}
+                {% else %}
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                {% endif %}
+                <form action="{{ url_for('main.chosen_company', company_id=item.id) }}">
+                    <td><button type="submit" class="btn btn-primary">Edit Employee</button></td>
+                </form>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
